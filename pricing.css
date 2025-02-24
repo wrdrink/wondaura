@@ -1,0 +1,160 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #f9f9f9, #e3f2fd);
+    color: #333;
+    text-align: center;
+    padding-top: 80px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* Header */
+.main-header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+}
+
+.main-header p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 2rem;
+}
+
+/* Pricing Toggle */
+.pricing-toggle {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
+}
+
+.switch {
+    position: relative;
+    width: 50px;
+    height: 25px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    width: 50px;
+    height: 25px;
+    background: #bbb;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.slider:before {
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2.5px;
+    left: 3px;
+    transition: 0.3s;
+}
+
+input:checked + .slider {
+    background: #2c3e50;
+}
+
+input:checked + .slider:before {
+    transform: translateX(25px);
+}
+
+/* Pricing Plans */
+.pricing-plans {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.plan {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    text-align: center;
+    width: 30%;
+}
+
+.plan:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.recommended {
+    border: 3px solid #2c3e50;
+}
+
+.price {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin: 1rem 0;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+ul li {
+    font-size: 1rem;
+    margin: 10px 0;
+}
+
+ul i {
+    margin-right: 8px;
+    color: #2c3e50;
+}
+
+.select-plan {
+    background: #2c3e50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: 0.3s;
+    margin-top: 1rem; /* Add margin to separate from other elements */
+}
+
+.select-plan:hover {
+    background: #1a252f;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .pricing-plans {
+        flex-direction: column;
+        align-items: center;
+    }
+    .plan {
+        width: 90%;
+    }
+}

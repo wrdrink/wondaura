@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mad Mathematics</title>
+    <link rel="icon" href="Wondaura Logo (Smaller Text).svg" type="image/x-icon">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&display=swap');
+
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
+            font-family: 'Exo 2', sans-serif;
+            color: #fff;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+        .circuits {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/circuit.png') repeat;
+            opacity: 0.15;
+            z-index: 1;
+            animation: pulseCircuit 10s infinite;
+        }
+        @keyframes pulseCircuit {
+            0% { opacity: 0.15; }
+            50% { opacity: 0.25; }
+            100% { opacity: 0.15; }
+        }
+        .calculator-casing {
+            position: absolute;
+            width: 90vw;
+            max-width: 700px;
+            height: 90vh;
+            max-height: 900px;
+            background: #0a0f1a;
+            border: 2vw solid #333;
+            border-radius: 3vw;
+            box-shadow: inset 0 0 3vw rgba(0, 204, 255, 0.2), 0 0 4vw rgba(0, 0, 0, 0.5);
+            z-index: 2;
+        }
+        h1 {
+            font-size: clamp(2em, 4vw, 2.5em);
+            text-shadow: 0 0 1vw #00ccff, 0 0 2vw #ff00ff;
+            margin-bottom: 2vh;
+            z-index: 10;
+            color: #e0e0ff;
+        }
+        #calculator {
+            position: relative;
+            width: 40vw;
+            height: 60vh;
+            max-width: 400px;
+            max-height: 600px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2vw;
+            z-index: 5;
+            background: transparent;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+        }
+        #calculator.visible {
+            opacity: 1;
+        }
+        #screen {
+            width: 85%;
+            height: 15vh;
+            max-height: 120px;
+            background: rgba(0, 0, 0, 0.9);
+            border: 0.5vw solid #00ccff;
+            border-radius: 1.5vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(1.5em, 3vw, 1.8em);
+            color: #00ccff;
+            text-shadow: 0 0 0.8vw #00ccff;
+            margin-bottom: 2vh;
+            box-shadow: 0 0 2vw rgba(0, 204, 255, 0.7);
+            animation: pulseScreen 3s infinite;
+        }
+        @keyframes pulseScreen {
+            0% { box-shadow: 0 0 2vw rgba(0, 204, 255, 0.7); }
+            50% { box-shadow: 0 0 3vw rgba(0, 204, 255, 0.9); }
+            100% { box-shadow: 0 0 2vw rgba(0, 204, 255, 0.7); }
+        }
+        #kid {
+            width: 10vw;
+            height: 12vh;
+            max-width: 100px;
+            max-height: 120px;
+            background: url('https://i.imgur.com/8QvZ6qG.png') no-repeat center center;
+            background-size: contain;
+            margin-bottom: 2vh;
+            animation: bounce 1s infinite;
+            z-index: 6;
+        }
+        #kid.correct {
+            animation: bounceCorrect 0.5s;
+        }
+        #kid.wrong {
+            animation: shakeKid 0.3s;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-1.5vh); }
+        }
+        @keyframes bounceCorrect {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-2vh); }
+            100% { transform: translateY(0); }
+        }
+        @keyframes shakeKid {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-1vh); }
+            50% { transform: translateX(1vh); }
+            75% { transform: translateX(-1vh); }
+            100% { transform: translateX(0); }
+        }
+        #answer-input {
+            font-size: clamp(1.2em, 2.5vw, 1.5em);
+            padding: 1vh 1vw;
+            width: 15vw;
+            max-width: 150px;
+            text-align: center;
+            border: 0.3vw solid #00ccff;
+            border-radius: 1vw;
+            background: #0a0f1a;
+            color: #fff;
+            box-shadow: 0 0 1vw #00ccff;
+            margin-bottom: 2vh;
+        }
+        #hint-button {
+            font-size: clamp(0.8em, 1.5vw, 1em);
+            padding: 1vh 2vw;
+            border: 0.2vw solid #ff00ff;
+            border-radius: 1.5vw;
+            background: linear-gradient(45deg, #1a0b2e, #2b003b);
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 0.8vw #ff00ff;
+            transition: transform 0.2s, box-shadow 0.2s;
+            animation: pulseHint 2s infinite;
+            margin-bottom: 2vh;
+        }
+        #hint-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 1.5vw #ff00ff;
+        }
+        @keyframes pulseHint {
+            0% { box-shadow: 0 0 0.8vw #ff00ff; }
+            50% { box-shadow: 0 0 1.2vw #ff00ff; }
+            100% { box-shadow: 0 0 0.8vw #ff00ff; }
+        }
+        #meme-box { /* Renamed from hint-box */
+            width: 30vw;
+            max-width: 300px;
+            background: linear-gradient(45deg, #00ff00, #ffff00); /* Bright meme colors */
+            color: #000;
+            padding: 1.5vh;
+            border: 0.3vw solid #fff;
+            border-radius: 1vw;
+            box-shadow: 0 0 2vw rgba(255, 255, 0, 0.8);
+            font-size: clamp(1.2em, 2.5vw, 1.5em); /* Bigger text */
+            font-weight: 700;
+            text-shadow: 0 0 0.5vw #fff;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            z-index: 7;
+            margin-bottom: 2vh;
+        }
+        #meme-box.visible {
+            opacity: 1;
+            animation: popMeme 1s ease-in-out;
+        }
+        @keyframes popMeme {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .status-bar {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 40vw;
+            background: rgba(0, 0, 0, 0.7);
+            border: 0.2vw solid #00ccff;
+            border-radius: 1vw;
+            padding: 1vh;
+            box-shadow: 0 0 1vw #00ccff;
+        }
+        .status-bar p {
+            font-size: clamp(1em, 2vw, 1.2em);
+            text-shadow: 0 0 0.5vw #00ccff;
+            margin: 0;
+        }
+        #score.animate {
+            animation: bounceScore 0.3s ease-in-out;
+        }
+        @keyframes bounceScore {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        #progress-bar {
+            width: 80%;
+            height: 2vh;
+            max-height: 20px;
+            background: #333;
+            border: 0.2vw solid #00ccff;
+            border-radius: 1vw;
+            margin-top: 1vh;
+        }
+        #progress {
+            width: 100%;
+            height: 100%;
+            background: #00ccff;
+            border-radius: 0.8vw;
+            transition: width 0.5s linear;
+        }
+        #game-over {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 3vh;
+            border-radius: 2vw;
+            text-align: center;
+            box-shadow: 0 0 2vw #00ccff;
+            z-index: 10;
+        }
+        #game-over h2 {
+            font-size: clamp(1.5em, 3vw, 2em);
+            margin-bottom: 2vh;
+        }
+        #game-over button {
+            font-size: clamp(1em, 2vw, 1.2em);
+            padding: 1vh 2vw;
+            border: 0.3vw solid #00ccff;
+            border-radius: 1vw;
+            background: #0a0f1a;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 1vw #00ccff;
+        }
+        #game-over button:hover {
+            background: #1a263b;
+        }
+        .correct {
+            animation: flash 0.5s ease-in-out;
+        }
+        @keyframes flash {
+            0% { color: #00ccff; }
+            50% { color: #fff; }
+            100% { color: #00ccff; }
+        }
+        .wrong {
+            animation: shake 0.3s ease-in-out;
+        }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-0.5vh); }
+            50% { transform: translateX(0.5vh); }
+            75% { transform: translateX(-0.5vh); }
+            100% { transform: translateX(0); }
+        }
+        .bonus {
+            position: absolute;
+            top: 1vh;
+            right: 1vw;
+            color: #ffdd00;
+            font-size: clamp(0.8em, 1.5vw, 1em);
+            text-shadow: 0 0 0.5vw #ffdd00;
+        }
+        .power-up {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: #ffdd00;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #000;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 1vw #ffdd00;
+            animation: pulsePower 1s infinite;
+            z-index: 20;
+        }
+        @keyframes pulsePower {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: #00ccff;
+            border-radius: 50%;
+            animation: rise 1s ease-out forwards;
+            z-index: 7;
+        }
+        @keyframes rise {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-5vh); }
+        }
+        .level-up-flash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            opacity: 0;
+            z-index: 10;
+            pointer-events: none;
+        }
+        @media (max-width: 600px) {
+            .calculator-casing {
+                width: 95vw;
+                height: 95vh;
+                border: 3vw solid #333;
+            }
+            #calculator {
+                width: 80vw;
+                height: 70vh;
+                padding: 3vw;
+            }
+            #screen {
+                font-size: clamp(1.2em, 4vw, 1.5em);
+            }
+            #answer-input {
+                width: 30vw;
+                font-size: clamp(1em, 3vw, 1.2em);
+            }
+            #hint-button {
+                font-size: clamp(0.7em, 2vw, 0.9em);
+            }
+            .status-bar p {
+                font-size: clamp(0.8em, 2.5vw, 1em);
+            }
+            .power-up {
+                width: 30px;
+                height: 30px;
+                font-size: 0.8em;
+            }
+            #meme-box {
+                width: 50vw;
+                font-size: clamp(1em, 3vw, 1.2em);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="circuits"></div>
+    <div class="calculator-casing"></div>
+    <h1>Mad Mathematics</h1>
+    
+    <div id="mode-selector" style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0, 0, 0, 0.9); padding: 3vh; border-radius: 2vw; text-align: center; box-shadow: 0 0 2vw #00ccff; z-index: 15;">
+        <h2 style="font-size: clamp(1.5em, 3vw, 2em); margin-bottom: 2vh;">Choose Your Mode</h2>
+        <button id="easy-mode" style="font-size: clamp(1em, 2vw, 1.2em); padding: 1vh 2vw; margin: 1vh; border: 0.3vw solid #00ccff; border-radius: 1vw; background: #0a0f1a; color: #fff; cursor: pointer;">Easy</button>
+        <button id="hard-mode" style="font-size: clamp(1em, 2vw, 1.2em); padding: 1vh 2vw; margin: 1vh; border: 0.3vw solid #00ccff; border-radius: 1vw; background: #0a0f1a; color: #fff; cursor: pointer;">Hard</button>
+        <button id="insane-mode" style="font-size: clamp(1em, 2vw, 1.2em); padding: 1vh 2vw; margin: 1vh; border: 0.3vw solid #00ccff; border-radius: 1vw; background: #0a0f1a; color: #fff; cursor: pointer;">Insane</button>
+    </div>
+
+    <div id="calculator">
+        <div id="screen">3 + 5 = ?</div>
+        <div id="meme-box"></div> <!-- Renamed from hint-box -->
+        <div id="kid"></div>
+        <input type="number" id="answer-input" placeholder="Answer" />
+        <button id="hint-button">Hint</button>
+        <div class="status-bar">
+            <p id="score">Score: 0</p>
+            <p id="streak">Streak: 0</p>
+            <p id="timer">Time left: 30s</p>
+        </div>
+        <div id="progress-bar"><div id="progress"></div></div>
+    </div>
+    <div id="game-over">
+        <h2>Game Over!</h2>
+        <p>Your final score: <span id="final-score">0</span></p>
+        <p id="high-scores">High Scores: </p>
+        <button id="restart-button">Restart</button>
+    </div>
+
+    <audio id="bg-music" src="WhatsApp Audio 2025-02-20 at 11.46.12 PM.aac" loop></audio>
+    <audio id="correct-sound" src="correct-156911.mp3"></audio>
+    <audio id="wrong-sound" src="wrong-47985.mp3"></audio>
+    <audio id="hint-sound" src="ghost-multi-bell-304739.mp3"></audio>
+    
+    <div><p>this protototype made in 3 hours</p></div>
+
+    <script>
+        let score = 0;
+        let timeLeft = 30;
+        let streak = 0;
+        let level = 1;
+        let currentQuestion = {};
+        let timerInterval;
+        let isBonus = false;
+        let difficulty = 'easy';
+        let powerUpActive = null;
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+        let hasUserInteracted = false;
+
+        const screen = document.getElementById('screen');
+        const answerInput = document.getElementById('answer-input');
+        const hintButton = document.getElementById('hint-button');
+        const memeBox = document.getElementById('meme-box'); // Renamed from hintBox
+        const kid = document.getElementById('kid');
+        const scoreDisplay = document.getElementById('score');
+        const streakDisplay = document.getElementById('streak');
+        const timerDisplay = document.getElementById('timer');
+        const progress = document.getElementById('progress');
+        const calculator = document.getElementById('calculator');
+        const gameOverScreen = document.getElementById('game-over');
+        const finalScoreDisplay = document.getElementById('final-score');
+        const highScoresDisplay = document.getElementById('high-scores');
+        const restartButton = document.getElementById('restart-button');
+        const modeSelector = document.getElementById('mode-selector');
+        const easyMode = document.getElementById('easy-mode');
+        const hardMode = document.getElementById('hard-mode');
+        const insaneMode = document.getElementById('insane-mode');
+        const bgMusic = document.getElementById('bg-music');
+        const correctSound = document.getElementById('correct-sound');
+        const wrongSound = document.getElementById('wrong-sound');
+        const hintSound = document.getElementById('hint-sound');
+
+        // Meme collections
+        const correctMemes = [
+            "MATH BOSS: YOU CAN’T DIVIDE ME!",
+            "CALCULATED LIKE A PRO!",
+            "NUMBERS FEAR ME NOW!",
+            "EINSTEIN APPROVES THIS!",
+            "TOO SMART FOR MATH!"
+        ];
+        const wrongMemes = [
+            "BRAIN.exe HAS STOPPED!",
+            "MATH: 1, YOU: 0!",
+            "EVEN MY CAT CAN COUNT BETTER!",
+            "FOOLISH HUMAN, TRY AGAIN!",
+            "CALCULATOR LAUGHS AT YOU!"
+        ];
+
+        easyMode.addEventListener('click', () => startGame('easy'));
+        hardMode.addEventListener('click', () => startGame('hard'));
+        insaneMode.addEventListener('click', () => startGame('insane'));
+
+        function startGame(mode) {
+            difficulty = mode;
+            console.log(`Starting game in ${mode} mode`);
+            modeSelector.style.display = 'none';
+            hasUserInteracted = true;
+            resetGame();
+        }
+
+        function generateQuestion() {
+            let operations = ['+', '-'];
+            if (difficulty === 'hard' || difficulty === 'insane') operations = ['+', '-', '*', '/'];
+            const operation = operations[Math.floor(Math.random() * operations.length)];
+            let num1, num2, answer, points;
+            const maxNum = difficulty === 'easy' ? 20 : difficulty === 'hard' ? 50 : 100;
+
+            isBonus = Math.random() < 0.2;
+            if (isBonus) {
+                num1 = Math.floor(Math.random() * 10) + 1;
+                num2 = Math.floor(Math.random() * 10) + 1;
+                answer = num1 * num2;
+                points = 10;
+                screen.innerHTML = `${num1} × ${num2} = ? <span class="bonus">Quantum Boost!</span>`;
+            } else {
+                switch (operation) {
+                    case '+':
+                        num1 = Math.floor(Math.random() * maxNum) + 1;
+                        num2 = Math.floor(Math.random() * maxNum) + 1;
+                        answer = num1 + num2;
+                        points = 1;
+                        break;
+                    case '-':
+                        num1 = Math.floor(Math.random() * maxNum) + 1;
+                        num2 = Math.floor(Math.random() * num1) + 1;
+                        answer = num1 - num2;
+                        points = 2;
+                        break;
+                    case '*':
+                        num1 = Math.floor(Math.random() * (maxNum / 2)) + 1;
+                        num2 = Math.floor(Math.random() * (maxNum / 2)) + 1;
+                        answer = num1 * num2;
+                        points = 3;
+                        break;
+                    case '/':
+                        num2 = Math.floor(Math.random() * (maxNum / 2)) + 1;
+                        answer = Math.floor(Math.random() * (maxNum / 2)) + 1;
+                        num1 = num2 * answer;
+                        points = 5;
+                        break;
+                }
+                screen.innerHTML = `${num1} ${operation} ${num2} = ?`;
+            }
+            currentQuestion = { num1, num2, operation, answer, points };
+            console.log(`Question: ${num1} ${operation} ${num2} = ${answer}`);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            const timeDecrease = difficulty === 'easy' ? 1000 : difficulty === 'hard' ? 700 : 500;
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                timerDisplay.textContent = `Time left: ${timeLeft}s`;
+                progress.style.width = `${(timeLeft / 30) * 100}%`;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    gameOver();
+                }
+            }, timeDecrease);
+            console.log(`Timer started with interval: ${timeDecrease}ms`);
+        }
+
+        function resetGame() {
+            score = 0;
+            timeLeft = 30;
+            streak = 0;
+            level = 1;
+            powerUpActive = null;
+            scoreDisplay.textContent = `Score: ${score}`;
+            streakDisplay.textContent = `Streak: ${streak}`;
+            timerDisplay.textContent = `Time left: ${timeLeft}s`;
+            progress.style.width = '100%';
+            gameOverScreen.style.display = 'none';
+            calculator.classList.add('visible');
+            generateQuestion();
+            answerInput.value = '';
+            answerInput.disabled = false;
+            answerInput.focus();
+            memeBox.classList.remove('visible');
+            hintButton.style.display = difficulty === 'insane' ? 'none' : 'block';
+            startTimer();
+            if (hasUserInteracted) {
+                bgMusic.play().catch(e => console.log("Background music failed:", e));
+            }
+            console.log("Game reset");
+        }
+
+        function gameOver() {
+            clearInterval(timerInterval);
+            gameOverScreen.style.display = 'block';
+            finalScoreDisplay.textContent = score;
+            updateHighScores();
+            answerInput.disabled = true;
+            bgMusic.pause();
+            console.log("Game over");
+        }
+
+        function getHint() {
+            let hint;
+            const { num1, num2, answer, operation } = currentQuestion;
+            if (answer % 2 === 0) hint = "The answer is even.";
+            else hint = "The answer is odd.";
+            switch (operation) {
+                case '+': hint += ` Think: ${num1} plus ${num2}.`; break;
+                case '-': hint += ` Think: ${num1} minus ${num2}.`; break;
+                case '*': hint += ` Think: ${num1} times ${num2}.`; break;
+                case '/': hint += ` Think: ${num1} divided by ${num2}.`; break;
+            }
+            memeBox.textContent = hint; // Using memeBox for hints too
+            memeBox.style.background = 'linear-gradient(45deg, #00ccff, #ff00ff)'; // Hint styling
+            memeBox.classList.add('visible');
+            timeLeft -= 3;
+            timerDisplay.textContent = `Time left: ${timeLeft}s`;
+            progress.style.width = `${(timeLeft / 30) * 100}%`;
+            if (hasUserInteracted) {
+                hintSound.play().catch(e => console.log("Hint sound failed:", e));
+            }
+            setTimeout(() => {
+                memeBox.classList.remove('visible');
+                memeBox.textContent = '';
+            }, 2000);
+            console.log("Hint displayed");
+        }
+
+        function showMeme(isCorrect) {
+            const memes = isCorrect ? correctMemes : wrongMemes;
+            const memeText = memes[Math.floor(Math.random() * memes.length)];
+            memeBox.textContent = memeText;
+            memeBox.style.background = isCorrect 
+                ? 'linear-gradient(45deg, #00ff00, #ffff00)' // Green-Yellow for correct
+                : 'linear-gradient(45deg, #ff0000, #ff00ff)'; // Red-Magenta for wrong
+            memeBox.classList.add('visible');
+            setTimeout(() => {
+                memeBox.classList.remove('visible');
+                memeBox.textContent = '';
+            }, 1500); // Shorter duration for memes
+            console.log(`Meme displayed: ${memeText}`);
+        }
+
+        function spawnPowerUp() {
+            console.log("Attempting to spawn power-up");
+            const powerUp = document.createElement('div');
+            powerUp.className = 'power-up';
+            const types = ['2x', 'Freeze', 'Hint'];
+            const type = types[Math.floor(Math.random() * types.length)];
+            powerUp.innerText = type;
+
+            const calcRect = calculator.getBoundingClientRect();
+            const topOffset = calcRect.top + calcRect.height + 20;
+            const leftOffset = calcRect.left + (calcRect.width / 2) - 20;
+            powerUp.style.position = 'absolute';
+            powerUp.style.top = `${topOffset}px`;
+            powerUp.style.left = `${leftOffset}px`;
+            powerUp.style.zIndex = '20';
+
+            document.body.appendChild(powerUp);
+            console.log(`Power-Up spawned: ${type} at top: ${topOffset}px, left: ${leftOffset}px`);
+
+            powerUp.addEventListener('click', () => {
+                if (type === '2x') {
+                    powerUpActive = 'double';
+                    setTimeout(() => powerUpActive = null, 5000);
+                    console.log("Power-Up: Double points activated");
+                } else if (type === 'Freeze') {
+                    clearInterval(timerInterval);
+                    setTimeout(startTimer, 3000);
+                    console.log("Power-Up: Timer frozen");
+                } else if (type === 'Hint') {
+                    getHint();
+                    console.log("Power-Up: Free hint");
+                }
+                powerUp.remove();
+            });
+            setTimeout(() => {
+                if (powerUp.parentNode) powerUp.remove();
+                console.log("Power-Up removed after timeout");
+            }, 3000);
+        }
+
+        function spawnParticles() {
+            for (let i = 0; i < 10; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = `${kid.offsetLeft + kid.offsetWidth / 2 + (Math.random() * 20 - 10)}px`;
+                particle.style.top = `${kid.offsetTop + kid.offsetHeight}px`;
+                document.body.appendChild(particle);
+                setTimeout(() => particle.remove(), 1000);
+            }
+            console.log("Particles spawned");
+        }
+
+        function levelUpTransition() {
+            const flash = document.createElement('div');
+            flash.className = 'level-up-flash';
+            document.body.appendChild(flash);
+            flash.style.opacity = '0.8';
+            setTimeout(() => {
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 500);
+            }, 300);
+            console.log("Level up transition");
+        }
+
+        function checkAchievements() {
+            if (streak >= 5 && !achievements.includes('Math Wizard')) {
+                achievements.push('Math Wizard');
+                alert('Achievement Unlocked: Math Wizard!');
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+            }
+            if (score >= 20 && !achievements.includes('Score Master')) {
+                achievements.push('Score Master');
+                alert('Achievement Unlocked: Score Master!');
+                localStorage.setItem('achievements', JSON.stringify(achievements));
+            }
+            console.log("Achievements checked");
+        }
+
+        function updateHighScores() {
+            let highScores = JSON.parse(localStorage.getItem('highScores')) || [];
+            highScores.push(score);
+            highScores.sort((a, b) => b - a);
+            highScores = highScores.slice(0, 5);
+            localStorage.setItem('highScores', JSON.stringify(highScores));
+            highScoresDisplay.textContent = `High Scores: ${highScores.join(', ')}`;
+            console.log("High scores updated:", highScores);
+        }
+
+        function checkAnswer() {
+            const answer = parseInt(answerInput.value.trim());
+            if (!isNaN(answer) && answer === currentQuestion.answer) {
+                streak++;
+                const multiplier = Math.min(Math.floor(streak / 5) + 1, 3) * (powerUpActive === 'double' ? 2 : 1);
+                const pointsEarned = currentQuestion.points * multiplier;
+                score += pointsEarned;
+                if (isBonus) timeLeft += 5;
+                scoreDisplay.textContent = `Score: ${score}`;
+                scoreDisplay.classList.add('animate');
+                setTimeout(() => scoreDisplay.classList.remove('animate'), 300);
+                streakDisplay.textContent = `Streak: ${streak}`;
+                timerDisplay.textContent = `Time left: ${timeLeft}s`;
+                progress.style.width = `${(timeLeft / 30) * 100}%`;
+                screen.classList.add('correct');
+                kid.classList.add('correct');
+                spawnParticles();
+                spawnPowerUp();
+                showMeme(true); // Show correct meme
+                checkAchievements();
+                if (hasUserInteracted) {
+                    correctSound.play().catch(e => console.log("Correct sound failed:", e));
+                    bgMusic.play().catch(e => console.log("Background music failed:", e));
+                }
+                setTimeout(() => {
+                    screen.classList.remove('correct');
+                    kid.classList.remove('correct');
+                    if (score >= level * 10) {
+                        level++;
+                        timeLeft = Math.max(20, 30 - level * 2);
+                        levelUpTransition();
+                        screen.textContent = `Level Up! Level ${level}`;
+                        setTimeout(generateQuestion, 1000);
+                    } else {
+                        generateQuestion();
+                    }
+                }, 500);
+                console.log(`Correct answer! Score: ${score}, Streak: ${streak}`);
+            } else if (!isNaN(answer)) {
+                streak = 0;
+                timeLeft -= 2;
+                timerDisplay.textContent = `Time left: ${timeLeft}s`;
+                progress.style.width = `${(timeLeft / 30) * 100}%`;
+                streakDisplay.textContent = `Streak: ${streak}`;
+                screen.classList.add('wrong');
+                kid.classList.add('wrong');
+                showMeme(false); // Show wrong meme
+                if (hasUserInteracted) {
+                    wrongSound.play().catch(e => console.log("Wrong sound failed:", e));
+                }
+                setTimeout(() => {
+                    screen.classList.remove('wrong');
+                    kid.classList.remove('wrong');
+                }, 300);
+                console.log("Wrong answer");
+            }
+            answerInput.value = '';
+            if (timeLeft <= 0) gameOver();
+        }
+
+        answerInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                hasUserInteracted = true;
+                checkAnswer();
+            }
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if ((e.key === 'h' || e.key === 'H') && difficulty !== 'insane') {
+                hasUserInteracted = true;
+                getHint();
+            }
+        });
+
+        hintButton.addEventListener('click', () => {
+            if (difficulty !== 'insane') {
+                hasUserInteracted = true;
+                getHint();
+            }
+        });
+
+        restartButton.addEventListener('click', () => {
+            modeSelector.style.display = 'block';
+            gameOverScreen.style.display = 'none';
+        });
+
+        modeSelector.style.display = 'block';
+        calculator.classList.remove('visible');
+    </script>
+</body>
+</html>

@@ -1,0 +1,293 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    line-height: 1.6;
+    background-color: #fdf6e3;
+    color: #444;
+    margin: 0;
+    padding-top: 80px; /* Adjust this value based on the height of your header */
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+.main-header {
+    background: linear-gradient(90deg, #ff9a9e, #fad0c4);
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+    border-bottom: 5px solid #ffd700;
+    position: fixed; /* Make the header fixed */
+    top: 0;
+    width: 100%;
+    z-index: 1000; /* Ensure it stays on top of other elements */
+    transition: top 0.3s;
+}
+
+.main-header.hidden {
+    top: -100px; /* Adjust this value based on the height of your header */
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.wonder a {
+    font-family: 'Comic Sans MS', cursive;
+    font-size: 2rem;
+    color: #ffd700;
+    text-decoration: none;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.circle-nav {
+    display: flex;
+    gap: 1rem;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    gap: 1rem;
+}
+
+.circle-link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 154, 158, 0.9); /* Semi-transparent background */
+    border-radius: 50%;
+    color: #fff;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.circle-link a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #fff;
+    text-decoration: none;
+}
+
+.circle-link .link-text {
+    position: absolute;
+    bottom: -20px;
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    transform: translateY(10px);
+}
+
+.circle-link:hover {
+    transform: scale(1.1);
+}
+
+.circle-link:hover .link-text {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.friends-section, .challenges-section, .progress-section {
+    padding: 3rem 0;
+    text-align: center;
+    background-color: #fff;
+    margin: 2rem 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.friends-section h2, .challenges-section h2, .progress-section h2 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.friends-list, .challenges-list, .progress-list {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.friend-card {
+    display: flex;
+    align-items: center;
+    background: #ff9a9e;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem;
+    width: 100%;
+    max-width: 600px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.friend-card.visible {
+    opacity: 1;
+}
+
+.friend-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 1rem;
+}
+
+.friend-info {
+    text-align: left;
+}
+
+.friend-info h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.friend-info p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.friend-info .btn {
+    font-family: 'Comic Sans MS', cursive;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: #ffd700;
+    color: #444;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s;
+    text-decoration: none; /* Remove underline */
+    font-size: 1rem;
+}
+
+.friend-info .btn:hover {
+    background: #ff9a9e;
+    transform: scale(1.05);
+}
+
+.challenge-card, .progress-card {
+    background: #ff9a9e;
+    border-radius: 10px;
+    padding: 1rem;
+    margin: 1rem;
+    width: 250px;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.challenge-card.visible, .progress-card.visible {
+    opacity: 1;
+}
+
+.challenge-card h2, .progress-card h2 {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.challenge-card p, .progress-card p {
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.challenge-card .btn {
+    font-family: 'Comic Sans MS', cursive;
+    text-align: center;
+    padding: 0.5rem 1rem;
+    background: #ffd700;
+    color: #444;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s;
+    text-decoration: none; /* Remove underline */
+    font-size: 1rem;
+}
+
+.challenge-card .btn:hover {
+    background: #ff9a9e;
+    transform: scale(1.05);
+}
+
+.progress-card .progress-bar {
+    background: #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.progress-card .progress {
+    background: #ffd700;
+    height: 20px;
+    border-radius: 5px;
+}
+
+.main-footer {
+    background: #ff9a9e;
+    color: #fff;
+    padding: 1rem 0;
+    text-align: center;
+    border-top: 5px solid #ffd700;
+}
+
+.social-media {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.social-link {
+    color: #fff;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.social-link:hover {
+    color: #ffd700;
+}
+
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background: #ff9a9e;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease, transform 0.3s ease;
+    z-index: 1000;
+}
+
+.scroll-to-top:hover {
+    background: #ffd700;
+    transform: scale(1.1);
+}
+
+.scroll-to-top i {
+    margin: 0;
+}
