@@ -78,7 +78,7 @@ showSlides();
 function showSlides() {
     const slides = document.getElementsByClassName("mySlides");
     const dots = document.getElementsByClassName("dot");
-    console.log("Slides found:", slides.length); // Debug
+    console.log("Slides found:", slides.length);
     if (slides.length === 0) {
         console.error("No slides detected!");
         return;
@@ -101,4 +101,70 @@ function currentSlide(n) {
     showSlides();
 }
 
-// Rest of your JS (selectGrade, selectSubject, etc.) remains unchanged
+// Grade, Subject, Chapter, Game Selection Functions (Restored from Original)
+function selectGrade(grade) {
+    document.querySelector('.grade-cards').classList.add('hidden');
+    document.getElementById('subjectSelection').classList.remove('hidden');
+    console.log(`Selected Grade: ${grade}`);
+}
+
+function selectSubject(subject) {
+    document.getElementById('subjectSelection').classList.add('hidden');
+    document.getElementById('chapterSelection').classList.remove('hidden');
+    console.log(`Selected Subject: ${subject}`);
+}
+
+function selectChapter(chapter) {
+    document.getElementById('chapterSelection').classList.add('hidden');
+    document.getElementById('gameSelection').classList.remove('hidden');
+    console.log(`Selected Chapter: ${chapter}`);
+}
+
+// Friends Section Functions
+const friendsList = document.getElementById('friendsList');
+const messagesList = document.getElementById('messagesList');
+const competitionProgress = document.getElementById('competitionProgress');
+
+function addFriend(name, grade, imageUrl) {
+    const friendCard = document.createElement('div');
+    friendCard.classList.add('friend-card');
+    friendCard.innerHTML = `
+        <img src="${imageUrl}" alt="${name}'s picture" class="friend-image">
+        <h3>${name}</h3>
+        <p>Grade: ${grade}</p>
+    `;
+    friendsList.appendChild(friendCard);
+}
+
+function addMessage(message) {
+    const messageItem = document.createElement('li');
+    messageItem.textContent = message;
+    messagesList.appendChild(messageItem);
+}
+
+function updateCompetitionProgress(progress) {
+    competitionProgress.textContent = `Competition Progress: ${progress}%`;
+}
+
+document.getElementById('addFriendButton').addEventListener('click', () => {
+    const friendName = prompt('Enter friend\'s name:');
+    const friendGrade = prompt('Enter friend\'s grade:');
+    const friendImageUrl = prompt('Enter friend\'s image URL:');
+    if (friendName && friendGrade && friendImageUrl) {
+        addFriend(friendName, friendGrade, friendImageUrl);
+    }
+});
+
+document.getElementById('sendMessageButton').addEventListener('click', () => {
+    const message = prompt('Enter your message:');
+    if (message) {
+        addMessage(message);
+    }
+});
+
+document.getElementById('updateProgressButton').addEventListener('click', () => {
+    const progress = prompt('Enter competition progress (0-100):');
+    if (progress !== null) {
+        updateCompetitionProgress(progress);
+    }
+});
