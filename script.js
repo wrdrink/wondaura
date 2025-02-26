@@ -8,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const scrollToTopBtn = document.getElementById('scrollToTopBtn');
     const searchInput = document.getElementById('searchInput');
     const searchButton = document.getElementById('searchButton');
-    const friendsSection = document.getElementById('friends');
 
     menuToggle.addEventListener('click', () => {
         sidebar.classList.toggle('active');
@@ -101,7 +100,6 @@ function currentSlide(n) {
     showSlides();
 }
 
-// Grade, Subject, Chapter, Game Selection Functions (Restored from Original)
 function selectGrade(grade) {
     document.querySelector('.grade-cards').classList.add('hidden');
     document.getElementById('subjectSelection').classList.remove('hidden');
@@ -120,7 +118,6 @@ function selectChapter(chapter) {
     console.log(`Selected Chapter: ${chapter}`);
 }
 
-// Friends Section Functions
 const friendsList = document.getElementById('friendsList');
 const messagesList = document.getElementById('messagesList');
 const competitionProgress = document.getElementById('competitionProgress');
@@ -164,7 +161,9 @@ document.getElementById('sendMessageButton').addEventListener('click', () => {
 
 document.getElementById('updateProgressButton').addEventListener('click', () => {
     const progress = prompt('Enter competition progress (0-100):');
-    if (progress !== null) {
+    if (progress !== null && !isNaN(progress) && progress >= 0 && progress <= 100) {
         updateCompetitionProgress(progress);
+    } else {
+        alert('Please enter a valid number between 0 and 100.');
     }
 });
