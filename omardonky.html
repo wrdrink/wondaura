@@ -3,646 +3,225 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ghost Hunter: Haunted Clock Tower</title>
+    <title>Wondaura Games for Kids</title>
+    <link rel="stylesheet" href="omardonky.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="icon" href="Wondaura Logo (Smaller Text).svg" type="image/x-icon">
-
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Eater&display=swap');
-
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            background: #1a0b2e url('https://www.transparenttextures.com/patterns/dark-mosaic.png') repeat;
-            font-family: 'Eater', cursive;
-            color: #fff;
-            overflow: hidden;
-            margin: 0;
-            position: relative;
-        }
-        .cloud {
-            position: absolute;
-            width: 15vw;
-            height: 7vw;
-            max-width: 200px;
-            max-height: 100px;
-            background: radial-gradient(circle, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: drift linear infinite;
-            pointer-events: none;
-            z-index: 1;
-        }
-        #cloud1 { top: 10%; left: -15vw; animation-duration: 20s; }
-        #cloud2 { top: 30%; left: -15vw; animation-duration: 25s; }
-        #cloud3 { top: 50%; left: -15vw; animation-duration: 30s; }
-        @keyframes drift {
-            0% { transform: translateX(-15vw); }
-            100% { transform: translateX(100vw); }
-        }
-        h1 {
-            font-size: clamp(2em, 5vw, 3.5em);
-            margin-bottom: 2vh;
-            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-            color: #e0e0e0;
-            z-index: 10;
-        }
-        #clock {
-            position: relative;
-            width: 20vw;
-            height: 20vw;
-            max-width: 300px;
-            max-height: 300px;
-            border: 1vw solid #333;
-            border-radius: 50%;
-            background: url('https://www.transparenttextures.com/patterns/rocky-wall.png') #004d40;
-            box-shadow: 0 0 2vw rgba(0, 255, 255, 0.5), inset 0 0 0.5vw rgba(0, 0, 0, 0.8);
-            z-index: 5;
-            opacity: 0;
-            transform: scale(0.9);
-            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
-        }
-        #clock.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
-        .clock-number {
-            position: absolute;
-            font-size: clamp(1em, 1.5vw, 1.5em);
-            font-weight: bold;
-            color: #fff;
-            text-shadow: 0 0 0.2vw #000;
-            width: 1.5em;
-            height: 1.5em;
-            text-align: center;
-            line-height: 1.5em;
-            transform: translate(-50%, -50%);
-            transition: text-shadow 0.3s ease;
-        }
-        .clock-number.hint {
-            text-shadow: 0 0 10px #00ff00, 0 0 20px #00ff00;
-        }
-        .clock-hand {
-            position: absolute;
-            background-color: #fff;
-            transform-origin: 50% 100%;
-            border-radius: 0.3vw;
-            transition: transform 0.3s ease-in-out;
-            box-shadow: 0 0 0.3vw #00ffff;
-        }
-        #hour-hand { width: 0.5vw; height: 5vw; max-width: 8px; max-height: 80px; top: 50%; left: 50%; transform: translate(-50%, -100%) rotate(0deg); }
-        #minute-hand { width: 0.4vw; height: 7vw; max-width: 6px; max-height: 110px; top: 50%; left: 50%; transform: translate(-50%, -100%) rotate(0deg); }
-        #second-hand { width: 0.3vw; height: 8vw; max-width: 4px; max-height: 120px; top: 50%; left: 50%; background-color: #ff0000; transform: translate(-50%, -100%) rotate(0deg); }
-        #ui-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            width: 90%;
-            max-width: 800px;
-            margin-top: 2vh;
-            background: rgba(0, 0, 0, 0.5);
-            padding: 1vh 2vw;
-            border-radius: 1vw;
-            box-shadow: 0 0 1vw #ff00ff;
-            flex-wrap: wrap;
-            z-index: 10;
-        }
-        #ui-container p {
-            margin: 0 1vw;
-            font-size: clamp(1em, 2vw, 1.5em);
-            text-shadow: 0 0 0.3vw #ff00ff, 0 0 0.6vw #00ffff;
-            color: #e0e0e0;
-            z-index: 10;
-        }
-        #top-left-buttons {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            display: flex;
-            gap: 10px;
-            z-index: 100;
-        }
-        .ui-button {
-            font-family: 'Eater', cursive;
-            font-size: clamp(0.9em, 1.5vw, 1.2em);
-            padding: 0.8vh 1.5vw;
-            border: 0.2vw solid #00ffff;
-            border-radius: 0.8vw;
-            background: #1a0b2e;
-            color: #fff;
-            text-decoration: none;
-            cursor: pointer;
-            box-shadow: 0 0 0.8vw #00ffff;
-            transition: background 0.3s, box-shadow 0.3s, transform 0.2s;
-            pointer-events: auto;
-        }
-        .ui-button:hover {
-            background: #2b003b;
-            box-shadow: 0 0 1.5vw #00ffff;
-            transform: scale(1.05);
-        }
-        .ui-button:active {
-            transform: scale(0.95);
-        }
-        #mute-button.muted {
-            border-color: #ff00ff;
-            box-shadow: 0 0 0.8vw #ff00ff;
-            color: #ff9999;
-        }
-        #mute-button.muted:hover {
-            box-shadow: 0 0 1.5vw #ff00ff;
-        }
-        #hint-button {
-            border-color: #ffdd00;
-            box-shadow: 0 0 0.8vw #ffdd00;
-        }
-        #hint-button:hover {
-            box-shadow: 0 0 1.5vw #ffdd00;
-        }
-        #hearts-container { font-size: clamp(1.5em, 3vw, 2em); }
-        #message { margin-top: 2vh; font-size: clamp(1em, 2vw, 1.5em); z-index: 10; }
-        #answer-input {
-            font-size: clamp(1em, 1.5vw, 1.2em);
-            padding: 0.8vh 1vw;
-            border: 0.2vw solid #00ffff;
-            border-radius: 0.8vw;
-            text-align: center;
-            margin-top: 2vh;
-            width: 15vw;
-            max-width: 200px;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            box-shadow: 0 0 0.8vw #00ffff;
-            animation: pulse-border 1.5s infinite;
-            z-index: 10;
-        }
-        @keyframes pulse-border {
-            0% { box-shadow: 0 0 0.8vw #00ffff; }
-            50% { box-shadow: 0 0 1.5vw #00ffff; }
-            100% { box-shadow: 0 0 0.8vw #00ffff; }
-        }
-        .ghost {
-            position: absolute;
-            width: 5vw;
-            height: 5vw;
-            max-width: 80px;
-            max-height: 80px;
-            background: url('Untitled design.png') no-repeat center center;
-            background-size: contain;
-            filter: drop-shadow(0 0 1.5vw #ff00ff) brightness(1.5);
-            opacity: 0.9;
-            animation: float 2s ease-in-out infinite, pulse 1.8s infinite;
-            z-index: 5;
-        }
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-1vw); }
-            100% { transform: translateY(0px); }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.08); }
-            100% { transform: scale(1); }
-        }
-        @keyframes shake {
-            0% { transform: translateX(0); }
-            25% { transform: translateX(-0.5vw); }
-            50% { transform: translateX(0.5vw); }
-            75% { transform: translateX(-0.5vw); }
-            100% { transform: translateX(0); }
-        }
-        .shake { animation: shake 0.4s ease-in-out; }
-        @keyframes burst {
-            0% { transform: scale(0); opacity: 1; }
-            100% { transform: scale(2); opacity: 0; }
-        }
-        .burst {
-            position: absolute;
-            width: 2vw;
-            height: 2vw;
-            max-width: 30px;
-            max-height: 30px;
-            background: radial-gradient(circle, #ff00ff, transparent);
-            border-radius: 50%;
-            animation: burst 0.5s ease-out forwards;
-            z-index: 6;
-        }
-        .bonus {
-            position: absolute;
-            width: 3vw;
-            height: 3vw;
-            max-width: 40px;
-            max-height: 40px;
-            font-size: clamp(1.5em, 2vw, 2em);
-            text-align: center;
-            color: #ffdd00;
-            display: none;
-            z-index: 5;
-            text-shadow: 0 0 0.8vw #ffdd00, 0 0 1.5vw #ff00ff;
-            animation: pulse 1s infinite;
-        }
-        #game-over {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 20;
-            text-align: center;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
-        }
-        #game-over.visible {
-            opacity: 1;
-            display: flex;
-        }
-        #game-over h2 {
-            font-size: clamp(2em, 5vw, 4em);
-            text-shadow: 0 0 1vw #ff00ff;
-        }
-        #game-over p {
-            font-size: clamp(1em, 2vw, 1.5em);
-        }
-        #restart-button {
-            font-size: clamp(1em, 2vw, 1.5em);
-            padding: 1vh 2vw;
-            border: 0.2vw solid #00ffff;
-            border-radius: 0.8vw;
-            background: #1a0b2e;
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 0.8vw #00ffff;
-            transition: background 0.3s, box-shadow 0.3s;
-        }
-        #restart-button:hover {
-            background: #2b003b;
-            box-shadow: 0 0 1.5vw #00ffff;
-        }
-        #start-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            z-index: 50;
-            text-align: center;
-            font-family: 'Arial', sans-serif; /* Simple font for start screen */
-        }
-        #start-screen h1, #start-screen h2, #start-screen h3 {
-            margin: 0.5em 0;
-        }
-        #start-screen h1 {
-            font-size: clamp(2em, 5vw, 3.5em);
-            text-shadow: 0 0 10px #ff00ff, 0 0 20px #00ffff;
-        }
-        #start-screen h3 {
-            font-size: clamp(1em, 2vw, 1.5em);
-        }
-        #start-button {
-            font-family: 'Arial', sans-serif; /* Match start screen font */
-            font-size: clamp(1em, 2vw, 1.5em);
-            padding: 1vh 2vw;
-            border: 0.2vw solid #00ffff;
-            border-radius: 0.8vw;
-            background: #1a0b2e;
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 0.8vw #00ffff;
-            transition: background 0.3s, box-shadow 0.3s;
-        }
-        #start-button:hover {
-            background: #2b003b;
-            box-shadow: 0 0 1.5vw #00ffff;
-        }
-        .correct {
-            color: #00ff00;
-            font-weight: bold;
-            animation: blink 0.5s ease-in-out;
-            text-shadow: 0 0 0.8vw #00ff00;
-        }
-        @keyframes blink {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-        audio { display: none; }
-    </style>
 </head>
 <body>
-    <div id="cloud1" class="cloud"></div>
-    <div id="cloud2" class="cloud"></div>
-    <div id="cloud3" class="cloud"></div>
-    <div id="top-left-buttons">
-        <button id="mute-button" class="ui-button" onclick="let audios = document.querySelectorAll('audio'); audios.forEach(a => a.muted = !a.muted); this.textContent = this.textContent === 'Mute' ? 'Unmute' : 'Mute'; this.classList.toggle('muted');">Mute</button>
-        <a href="omardonky.html" id="home-button" class="ui-button">Home</a>
-        <button id="hint-button" class="ui-button">Hint</button>
-    </div>
-    <h1>Ghost Hunter: Haunted Clock Tower</h1>
-    <div id="ui-container">
-        <p id="hearts-container">❤️❤️❤️</p>
-        <p id="score">Score: 0</p>
-        <p id="high-score">High Score: 0</p>
-        <p id="level">Level: 1</p>
-        <p id="timer">Time left: 5s</p>
-    </div>
-    <div id="clock">
-        <div id="hour-hand" class="clock-hand"></div>
-        <div id="minute-hand" class="clock-hand"></div>
-        <div id="second-hand" class="clock-hand"></div>
-        <div class="clock-number" style="top: 5%; left: 50%;">12</div>
-        <div class="clock-number" style="top: 14.64%; left: 77.5%;">1</div>
-        <div class="clock-number" style="top: 32.5%; left: 91.36%;">2</div>
-        <div class="clock-number" style="top: 50%; left: 95%;">3</div>
-        <div class="clock-number" style="top: 67.5%; left: 91.36%;">4</div>
-        <div class="clock-number" style="top: 85.36%; left: 77.5%;">5</div>
-        <div class="clock-number" style="top: 95%; left: 50%;">6</div>
-        <div class="clock-number" style="top: 85.36%; left: 22.5%;">7</div>
-        <div class="clock-number" style="top: 67.5%; left: 8.64%;">8</div>
-        <div class="clock-number" style="top: 50%; left: 5%;">9</div>
-        <div class="clock-number" style="top: 32.5%; left: 8.64%;">10</div>
-        <div class="clock-number" style="top: 14.64%; left: 22.5%;">11</div>
-    </div>
-    <div id="ghost1" class="ghost"></div>
-    <div id="ghost2" class="ghost"></div>
-    <div id="bonus" class="bonus"></div>
-    <p id="message">Hunt the ghosts at 12 o'clock!</p>
-    <input type="text" id="answer-input" placeholder="Type the hour (1-12)" />
-    <div id="game-over">
-        <h2>Game Over!</h2>
-        <p>Your final score: <span id="final-score">0</span></p>
-        <button id="restart-button">Restart Hunt</button>
-    </div>
-    <div id="start-screen">
-        <h2>Welcome to Ghost Hunter!</h2>
-        <h1>Tips to Play</h1>
-        <h3>Enter the correct hour shown on the clock.</h3>
-        <br>
-        <h3>For a hint, use the "Hint" button in the top left, but be careful—it reduces your time.</h3>
-        <h3>You have only 5 seconds per round.</h3>
-        <button id="start-button">Start Game</button>
-    </div>
-    <audio id="start-sound" src="game-start-6104.mp3"></audio>
-    <audio id="background-music" src="WhatsApp Audio 2025-02-20 at 11.46.12 PM.aac" loop></audio>
-    <audio id="ghost-spawn" src="ghost-multi-bell-304739.mp3"></audio>
-    <audio id="correct-sound" src="correct-156911.mp3"></audio>
-    <audio id="wrong-sound" src="wrong-47985.mp3"></audio>
+    <header id="home" class="main-header">
+        <div class="container">
+            <div class="header-content">
+                <div class="wonder">
+                    <a href="index.html"><h1>Wondaura</h1></a>
+                </div>
+                <nav class="circle-nav">
+                    <ul class="nav-links">
+                        <li class="circle-link">
+                            <a href="#notifications">
+                                <i class="fas fa-bell"></i>
+                                <span class="link-text">Notifications</span>
+                            </a>
+                        </li>
+                        <li class="circle-link">
+                            <a href="friends.html">
+                                <i class="fas fa-user-friends"></i>
+                                <span class="link-text">Friends</span>
+                            </a>
+                        </li>
+                        <li class="circle-link">
+                            <a href="#user">
+                                <i class="fas fa-user"></i>
+                                <span class="link-text">User</span>
+                            </a>
+                        </li>
+                        <li class="circle-link">
+                            <a href="parents.html">
+                                <i class="fas fa-user"></i>
+                                <span class="link-text">Your Parents</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            let score = 0;
-            let timeLeft = 5;
-            let hearts = 3;
-            let targetHour = Math.floor(Math.random() * 12) + 1;
-            let bonusHour = null;
-            let timerInterval = null;
-            let highScore = localStorage.getItem('highScore') || 0;
-            let isProcessing = false;
+    <section class="hero">
+        <div class="slideshow-container">
+            <div class="search-bar">
+                <input type="text" id="searchInput" class="search-input" placeholder="Type to search...">
+                <button id="searchButton" aria-label="Search"><i class="fas fa-search"></i></button>
+            </div>
+            <div class="mySlides">
+                <img src="Screenshot 2025-02-25 052824.png" style="width:100%">
+            </div>
+            <div class="mySlides">
+                <img src="Screenshot 2025-02-25 053106.png" style="width:100%">
+            </div>
+            <div class="mySlides">
+                <img src="Screenshot 2025-02-25 053106.png" style="width:100%">
+            </div>
+            <div class="mySlides">
+                <img src="Screenshot 2025-02-25 052824.png" style="width:100%">
+            </div>
+        </div>
+        <div class="game-nav-buttons">
+            <h2>Try These Games (Wondaura Products)</h2>
+            <a href="calculator.html" class="game-btn">Play Calculator Game</a>
+            <a href="text.html" class="game-btn">Play Time Ghost</a>
+        </div>
+        <div class="dots-container">
+            <span class="dot" onclick="currentSlide(1)"></span>
+            <span class="dot" onclick="currentSlide(2)"></span>
+            <span class="dot" onclick="currentSlide(3)"></span>
+            <span class="dot" onclick="currentSlide(4)"></span>
+        </div>
+        <aside class="sidebar">
+            <button class="menu-toggle">☰</button>
+            <nav class="sidebar-nav">
+                <h1>Wondaura</h1>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Games</a></li>
+                    <li><a href="#footer">Contact</a></li>
+                </ul>
+            </nav>
+        </aside>
+        <div class="container">
+            <h1>Welcome to Wondaura!</h1>
+            <p>Explore fun and exciting games for kids!</p>
+            <a href="#services" class="btn">Explore Games</a>
+        </div>
+    </section>
 
-            const scoreDisplay = document.getElementById('score');
-            const timerDisplay = document.getElementById('timer');
-            const message = document.getElementById('message');
-            const input = document.getElementById('answer-input');
-            const heartsContainer = document.getElementById('hearts-container');
-            const levelDisplay = document.getElementById('level');
-            const highScoreDisplay = document.getElementById('high-score');
-            const gameOverScreen = document.getElementById('game-over');
-            const finalScoreDisplay = document.getElementById('final-score');
-            const restartButton = document.getElementById('restart-button');
-            const ghost1 = document.getElementById('ghost1');
-            const ghost2 = document.getElementById('ghost2');
-            const bonus = document.getElementById('bonus');
-            const clock = document.getElementById('clock');
-            const startSound = document.getElementById('start-sound');
-            const backgroundMusic = document.getElementById('background-music');
-            const ghostSpawnSound = document.getElementById('ghost-spawn');
-            const correctSound = document.getElementById('correct-sound');
-            const wrongSound = document.getElementById('wrong-sound');
-            const startScreen = document.getElementById('start-screen');
-            const startButton = document.getElementById('start-button');
-            const hintButton = document.getElementById('hint-button');
+    <section id="services" class="services-section">
+        <div class="container">
+            <h2>Choose Your Grade</h2>
+            <div class="grade-cards">
+                <div class="card" onclick="selectGrade('Grade 1')"><h3>Grade 1</h3></div>
+                <div class="card" onclick="selectGrade('Grade 2')"><h3>Grade 2</h3></div>
+                <div class="card" onclick="selectGrade('Grade 3')"><h3>Grade 3</h3></div>
+            </div>
+            <div id="subjectSelection" class="hidden">
+                <h2>Choose Your Subject</h2>
+                <div class="subject-cards">
+                    <div class="card" onclick="selectSubject('Math')"><h3>Math</h3></div>
+                    <div class="card" onclick="selectSubject('Science')"><h3>Science</h3></div>
+                    <div class="card" onclick="selectSubject('English')"><h3>English</h3></div>
+                </div>
+            </div>
+            <div id="chapterSelection" class="hidden">
+                <h2>Choose Your Chapter</h2>
+                <div class="chapter-cards">
+                    <div class="card" onclick="selectChapter('Chapter 1')"><h3>Chapter 1</h3></div>
+                    <div class="card" onclick="selectChapter('Chapter 2')"><h3>Chapter 2</h3></div>
+                    <div class="card" onclick="selectChapter('Chapter 3')"><h3>Chapter 3</h3></div>
+                </div>
+            </div>
+            <div id="gameSelection" class="hidden">
+                <h2>Choose Your Game</h2>
+                <div class="game-cards">
+                    <div class="card"><h3>Game 1</h3><p>A fun puzzle game!</p></div>
+                    <div class="card"><h3>Game 2</h3><p>Race against time!</p></div>
+                    <div class="card"><h3>Game 3</h3><p>Explore new worlds!</p></div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            document.addEventListener('click', (e) => {
-                if (e.target !== input && !startScreen.contains(e.target) && !gameOverScreen.contains(e.target)) {
-                    input.focus();
-                }
-            });
+    <section id="about" class="about-section">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>Wondaura is a magical place where kids can enjoy fun games, sharpen skills, and learn while playing.</p>
+        </div>
+    </section>
 
-            function playSound(audio) {
-                if (!audio.muted) {
-                    audio.currentTime = 0;
-                    audio.play().catch(e => console.log(`${audio.id} failed:`, e));
-                }
-            }
+    <section id="friends" class="friends-section">
+        <div class="container">
+            <h2>Friends</h2>
+            <p>Play with friends, message them, and track your progress!</p>
+            <div id="friendsList" class="friends-cards"></div>
+            <div class="competition-progress" id="competitionProgress">Competition Progress: 0%</div>
+            <ul class="messages-list" id="messagesList"></ul>
+            <button id="addFriendButton" class="btn">Add Friend</button>
+            <button id="sendMessageButton" class="btn">Send Message</button>
+            <button id="updateProgressButton" class="btn">Update Progress</button>
+        </div>
+    </section>
 
-            function showHint() {
-                const clockNumbers = document.querySelectorAll('.clock-number');
-                clockNumbers.forEach(num => {
-                    if (parseInt(num.textContent) === targetHour) {
-                        num.classList.add('hint');
-                        setTimeout(() => num.classList.remove('hint'), 1000);
-                    }
-                });
-            }
+    <section id="featured" class="featured-section">
+        <div class="container">
+            <div class="featured-content">
+                <img src="DALL·E 2025-01-27 08.29.46 - A cartoon-style boy character with a vibrant green color theme. He has a friendly and cheerful personality, with big expressive eyes, a playful smile,.webp" alt="Featured Game" class="featured-image">
+                <div class="featured-text">
+                    <h2>Werkpley</h2>
+                    <p>Werkpley is your friend on your journey and hopes you become like him - a smart boy.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            function updateClock(moveSpeed = 1) {
-                const hourDeg = (targetHour % 12) * 30;
-                document.getElementById('hour-hand').style.transform = `translate(-50%, -100%) rotate(${hourDeg}deg)`;
+    <section class="lez-section">
+        <div class="cont">
+            <div class="lez-content">
+                <h2>Lezlern</h2>
+                <p>Lezlern is a smart friend who can solve Math, Science, and English problems quickly and correctly.</p>
+            </div>
+            <div class="lezl-content">
+                <img src="images.jpg" alt="Fun and Adventure">
+            </div>
+        </div>
+    </section>
 
-                const ghosts = [ghost1, ghost2];
-                const spawnRadii = [50, 70];
-                const targetRadius = 130;
+    <section id="highlighted" class="highlighted-section">
+        <div class="wrapper">
+            <div class="highlighted-content">
+                <img src="DALL·E 2025-01-27 08.29.59 - A cartoon-style boy character with a vibrant blue theme. The character has a playful and friendly expression, styled hair in a modern design, wearing .webp" alt="Highlighted Character" class="highlighted-image">
+                <div class="highlighted-text">
+                    <h2>Dr. Woendoerz</h2>
+                    <p>Dr. Woendoerz is your guide on your journey - you can ask him anything you want.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-                ghosts.forEach((ghost, index) => {
-                    ghost.style.transition = `left ${moveSpeed}s ease-in-out, top ${moveSpeed}s ease-in-out, opacity 0.5s ease-out`;
-                    const spawnRadius = spawnRadii[index];
-                    const spawnX = 50 + (spawnRadius / (20 * window.innerWidth / 100) * 100) * Math.cos(hourDeg * Math.PI / 180 - Math.PI / 2);
-                    const spawnY = 50 + (spawnRadius / (20 * window.innerWidth / 100) * 100) * Math.sin(hourDeg * Math.PI / 180 - Math.PI / 2);
-                    ghost.style.left = `${spawnX}%`;
-                    ghost.style.top = `${spawnY}%`;
-                    ghost.style.opacity = '0.9';
-                    ghost.style.display = 'block';
-                    ghost.classList.remove('shake');
+    <section class="image-text-section">
+        <div class="container">
+            <div class="text-content">
+                <h2>Rekendai</h2>
+                <p>Rekendai is your friend too, but he can be quietly stern sometimes when you do something he doesn’t approve of.</p>
+            </div>
+            <div class="image-content">
+                <img src="DALL·E 2025-01-27 08.29.55 - A cartoon-style boy character with a vibrant red theme. He has cheerful and friendly facial expressions, round eyes, a playful hairstyle, and wears cl.webp" alt="Fun and Adventure">
+            </div>
+        </div>
+    </section>
 
-                    setTimeout(() => {
-                        const targetX = 50 + (targetRadius / (20 * window.innerWidth / 100) * 100) * Math.cos(hourDeg * Math.PI / 180 - Math.PI / 2);
-                        const targetY = 50 + (targetRadius / (20 * window.innerWidth / 100) * 100) * Math.sin(hourDeg * Math.PI / 180 - Math.PI / 2);
-                        ghost.style.left = `${targetX}%`;
-                        ghost.style.top = `${targetY}%`;
-                    }, 100);
-                });
+    <section id="sponsors" class="sponsors-section">
+        <div class="container">
+            <h2>Our Sponsors</h2>
+            <div class="sponsor-circles">
+                <div class="sponsor-circle"><img src="Untitled.jpg" alt="Creativa Benha"></div>
+                <div class="sponsor-circle"><img src="sponsor2.png" alt="Sponsor 2"></div>
+                <div class="sponsor-circle"><img src="sponsor3.png" alt="Sponsor 3"></div>
+                <div class="sponsor-circle"><img src="sponsor4.png" alt="Sponsor 4"></div>
+            </div>
+        </div>
+    </section>
 
-                playSound(ghostSpawnSound);
-            }
-
-            function startTimer() {
-                if (timerInterval) clearInterval(timerInterval);
-                timerInterval = setInterval(() => {
-                    timeLeft--;
-                    timerDisplay.textContent = `Time left: ${timeLeft}s`;
-                    if (timeLeft <= 0) {
-                        clearInterval(timerInterval);
-                        loseHeart();
-                    }
-                }, 1000);
-            }
-
-            function loseHeart() {
-                hearts--;
-                heartsContainer.textContent = '❤️'.repeat(hearts);
-                if (hearts <= 0) {
-                    gameOver();
-                } else {
-                    resetRound();
-                }
-            }
-
-            function updateLevel() {
-                const level = Math.floor(score / 10) + 1;
-                levelDisplay.textContent = `Level: ${level}`;
-            }
-
-            function resetRound() {
-                timeLeft = Math.max(3, 5 - Math.floor(score / 5));
-                const moveSpeed = Math.max(0.5, 1 - Math.floor(score / 10) * 0.2);
-                targetHour = Math.floor(Math.random() * 12) + 1;
-                message.textContent = `Hunt the ghosts at ${targetHour} o'clock!`;
-                updateClock(moveSpeed);
-
-                if (Math.random() < 0.3) {
-                    bonusHour = Math.floor(Math.random() * 12) + 1;
-                    const bonusDeg = (bonusHour % 12) * 30;
-                    const bonusX = 50 + (130 / (20 * window.innerWidth / 100) * 100) * Math.cos(bonusDeg * Math.PI / 180 - Math.PI / 2);
-                    const bonusY = 50 + (130 / (20 * window.innerWidth / 100) * 100) * Math.sin(bonusDeg * Math.PI / 180 - Math.PI / 2);
-                    bonus.style.left = `${bonusX}%`;
-                    bonus.style.top = `${bonusY}%`;
-                    bonus.textContent = '⭐';
-                    bonus.style.display = 'block';
-                } else {
-                    bonus.style.display = 'none';
-                    bonusHour = null;
-                }
-
-                input.value = '';
-                input.focus();
-                startTimer();
-            }
-
-            function resetGame() {
-                score = 0;
-                hearts = 3;
-                timeLeft = 5;
-                targetHour = Math.floor(Math.random() * 12) + 1;
-                scoreDisplay.textContent = `Score: ${score}`;
-                heartsContainer.textContent = '❤️'.repeat(hearts);
-                updateLevel();
-                highScoreDisplay.textContent = `High Score: ${highScore}`;
-                message.textContent = `Hunt the ghosts at ${targetHour} o'clock!`;
-                gameOverScreen.classList.remove('visible');
-                clock.classList.add('visible');
-                updateClock();
-                input.value = '';
-                input.focus();
-                startTimer();
-                playSound(startSound);
-                playSound(backgroundMusic);
-            }
-
-            function gameOver() {
-                clearInterval(timerInterval);
-                gameOverScreen.classList.add('visible');
-                finalScoreDisplay.textContent = score;
-                ghost1.style.display = 'none';
-                ghost2.style.display = 'none';
-                bonus.style.display = 'none';
-                if (score > highScore) {
-                    highScore = score;
-                    localStorage.setItem('highScore', highScore);
-                    highScoreDisplay.textContent = `High Score: ${highScore}`;
-                }
-            }
-
-            function checkAnswer() {
-                const answer = parseInt(input.value.trim());
-                if (!isNaN(answer) && answer === targetHour) {
-                    score++;
-                    scoreDisplay.textContent = `Score: ${score}`;
-                    message.innerHTML = `<span class="correct">Ghosts defeated!</span>`;
-                    [ghost1, ghost2].forEach(ghost => {
-                        ghost.style.opacity = '0';
-                        const burst = document.createElement('div');
-                        burst.className = 'burst';
-                        burst.style.left = ghost.style.left;
-                        burst.style.top = ghost.style.top;
-                        clock.appendChild(burst);
-                        setTimeout(() => burst.remove(), 500);
-                    });
-                    playSound(correctSound);
-                    setTimeout(() => {
-                        resetRound();
-                    }, 500);
-                } else if (!isNaN(answer) && answer === bonusHour) {
-                    score += 5;
-                    scoreDisplay.textContent = `Score: ${score}`;
-                    message.textContent = "Bonus Star Collected!";
-                    bonus.style.display = 'none';
-                    bonusHour = null;
-                    playSound(correctSound);
-                    setTimeout(() => {
-                        message.textContent = `Hunt the ghosts at ${targetHour} o'clock!`;
-                    }, 1000);
-                } else if (!isNaN(answer)) {
-                    hearts--;
-                    heartsContainer.textContent = '❤️'.repeat(hearts);
-                    message.textContent = "Oops! Ghosts got closer!";
-                    [ghost1, ghost2].forEach(ghost => ghost.classList.add('shake'));
-                    playSound(wrongSound);
-                    setTimeout(() => {
-                        if (hearts > 0) {
-                            message.textContent = `Hunt the ghosts at ${targetHour} o'clock!`;
-                            [ghost1, ghost2].forEach(ghost => ghost.classList.remove('shake'));
-                        } else {
-                            gameOver();
-                        }
-                    }, 1000);
-                }
-                input.value = '';
-                updateLevel();
-            }
-
-            input.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !isProcessing) {
-                    isProcessing = true;
-                    checkAnswer();
-                    setTimeout(() => isProcessing = false, 1000);
-                }
-            });
-
-            restartButton.addEventListener('click', () => {
-                gameOverScreen.classList.remove('visible');
-                resetGame();
-            });
-
-            startButton.addEventListener('click', () => {
-                startScreen.style.display = 'none';
-                resetGame();
-            });
-
-            hintButton.addEventListener('click', () => {
-                showHint();
-            });
-        });
-    </script>
+    <footer id="footer" class="main-footer">
+        <div class="container">
+            <p>© 2025 Wondaura. All Rights Reserved.</p>
+            <div class="social-media">
+                <a href="https://www.instagram.com/wondaura2025/" target="_blank" class="social-link"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.facebook.com/profile.php?id=61571490778667" target="_blank" class="social-link"><i class="fab fa-facebook"></i></a>
+            </div>
+            <p>All images will be updated (this is a prototype only).</p>
+        </div>
+    </footer>
+    <button id="scrollToTopBtn" class="scroll-to-top"><i class="fas fa-arrow-up"></i></button>
+    <script src="script.js"></script>
 </body>
 </html>
