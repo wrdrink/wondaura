@@ -1,4 +1,4 @@
-// Slideshow functionality
+// scripts.js (unchanged from previous optimized version)
 var indexValue = 1;
 var autoSlideInterval;
 
@@ -6,10 +6,14 @@ showImg(indexValue);
 
 function btm_slide(e) {
     showImg(indexValue = e);
+    clearInterval(autoSlideInterval);
+    autoSlide();
 }
 
 function side_slide(e) {
     showImg(indexValue += e);
+    clearInterval(autoSlideInterval);
+    autoSlide();
 }
 
 function showImg(e) {
@@ -28,17 +32,15 @@ function showImg(e) {
     slider[indexValue - 1].style.background = "#AA60C8";
 }
 
-// Automatic slideshow
 function autoSlide() {
     autoSlideInterval = setInterval(function() {
         indexValue++;
         showImg(indexValue);
-    }, 5000); // 5 seconds
+    }, 5000);
 }
 
 autoSlide();
 
-// Header and Scroll Behavior
 let lastScrollTop = 0;
 const header = document.querySelector('.main-header');
 const logo = document.querySelector('.logo img');
@@ -48,12 +50,12 @@ window.addEventListener('scroll', function() {
     let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
     if (scrollTop > lastScrollTop && scrollTop > 50) {
         header.style.padding = '0.5rem 0';
-        logo.style.height = '35px';
-        title.style.fontSize = '1.8rem';
+        logo.style.height = '40px';
+        title.style.fontSize = '2rem';
     } else {
         header.style.padding = '1rem 0';
-        logo.style.height = '50px';
-        title.style.fontSize = '2.5rem';
+        logo.style.height = '60px';
+        title.style.fontSize = '2.8rem';
     }
     if (scrollTop > lastScrollTop) {
         header.style.top = '-100px';
@@ -62,7 +64,6 @@ window.addEventListener('scroll', function() {
     }
     lastScrollTop = scrollTop;
 
-    // Section animations
     const sections = document.querySelectorAll('.info-section, .featured-section, .sponsors-section');
     sections.forEach(section => {
         const rect = section.getBoundingClientRect();
@@ -72,7 +73,6 @@ window.addEventListener('scroll', function() {
     });
 });
 
-// Scroll to Top
 const scrollToTopBtn = document.getElementById('scrollToTopBtn');
 
 window.addEventListener('scroll', function() {
@@ -83,7 +83,6 @@ scrollToTopBtn.addEventListener('click', function() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
-// Popup
 document.addEventListener('DOMContentLoaded', () => {
     const contactUsLink = document.getElementById('contactUsLink');
     const popupOverlay = document.getElementById('popupOverlay');
