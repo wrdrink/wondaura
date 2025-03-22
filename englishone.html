@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Builder Town</title>
+    <link rel="icon" href="Wondaura Logo (Smaller Text).svg" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Comic+Neue:wght@400;700&family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Comic Neue', cursive;
+            text-align: center;
+            background-color: #87CEEB;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            color: #333;
+        }
+        h1 {
+            font-family: 'Open Sans', sans-serif;
+            font-weight: 700;
+            color: #333;
+            margin-top: 40px;
+            font-size: 36px;
+        }
+        #home-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #FFA500;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s;
+        }
+        #home-btn:hover {
+            background-color: #FF8C00;
+        }
+        #town {
+            height: 220px;
+            background: linear-gradient(to bottom, #87CEEB, #7CFC00);
+            border: 3px solid #333;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            position: relative;
+            overflow-x: auto; /* Allow horizontal scrolling if town grows wide */
+            white-space: nowrap;
+            transition: background 1s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .building {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            border: 2px solid #333;
+            border-radius: 5px;
+            animation: popIn 0.5s ease;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0) rotate(0deg); }
+            80% { transform: scale(1.1) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+        #mascot {
+            width: 50px;
+            height: 50px;
+            position: absolute;
+            left: 10px;
+            bottom: 10px;
+            background-color: #FF4500;
+            border-radius: 50%;
+            transition: transform 0.3s;
+        }
+        #mascot.cheer {
+            animation: cheer 0.5s infinite alternate;
+        }
+        @keyframes cheer {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(-10px); }
+        }
+        #drop-zone {
+            width: 320px;
+            height: 60px;
+            border: 3px dashed #333;
+            margin: 20px auto;
+            background-color: #FFF;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            border-radius: 8px;
+            transition: background-color 0.3s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        #drop-zone.drag-over {
+            background-color: #E0FFFF;
+        }
+        #letter-bank {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .letter {
+            width: 45px;
+            height: 45px;
+            background-color: #FF69B4;
+            color: white;
+            font-size: 26px;
+            font-weight: bold;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: move;
+            border-radius: 8px;
+            user-select: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .letter:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+        #feedback {
+            font-size: 24px;
+            margin: 10px 0;
+            font-weight: 700;
+            transition: opacity 0.5s;
+        }
+        #word-display {
+            position: absolute;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 40px;
+            color: #32CD32;
+            opacity: 0;
+            animation: wordPop 1s ease;
+            font-weight: 700;
+        }
+        @keyframes wordPop {
+            0% { opacity: 0; transform: translateX(-50%) scale(0); }
+            50% { opacity: 1; transform: translateX(-50%) scale(1.2); }
+            100% { opacity: 0; transform: translateX(-50%) scale(1); }
+        }
+        #score, #timer {
+            font-size: 22px;
+            margin: 10px 0;
+            font-weight: 700;
+        }
+        #score { color: #FFD700; }
+        #timer { color: #FF4500; }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        button, select {
+            padding: 12px 24px;
+            font-size: 18px;
+            background-color: #32CD32;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-family: 'Comic Neue', cursive;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        button:hover, select:hover {
+            background-color: #228B22;
+            transform: translateY(-2px);
+        }
+        #hint-btn {
+            background-color: #1E90FF;
+        }
+        #hint-btn:hover {
+            background-color: #4169E1;
+        }
+        #clear-btn {
+            background-color: #FF4500;
+        }
+        #clear-btn:hover {
+            background-color: #D63B00;
+        }
+        #pause-btn {
+            background-color: #FFD700;
+            color: #333;
+        }
+        #pause-btn:hover {
+            background-color: #E6C200;
+        }
+        #level-select {
+            background-color: #32CD32;
+        }
+        #level-select option:disabled {
+            color: #888;
+        }
+        #bonus-challenge {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #FFD700;
+            padding: 20px;
+            border: 3px solid #333;
+            border-radius: 10px;
+            display: none;
+            font-size: 24px;
+            z-index: 10;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        #bonus-challenge input {
+            font-size: 18px;
+            padding: 5px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 2px solid #333;
+        }
+        #start-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+        }
+        #start-screen div {
+            background-color: #FFF;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+        #start-screen h2 {
+            font-family: 'Open Sans', sans-serif;
+            font-size: 32px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        #start-screen button {
+            background-color: #32CD32;
+            padding: 15px 30px;
+            font-size: 20px;
+        }
+        #game-container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="start-screen">
+        <div>
+            <h2>Welcome to Word Builder Town!</h2>
+            <button onclick="startGame()">Start</button>
+        </div>
+    </div>
+    <div id="game-container">
+        <button id="home-btn" onclick="window.location.href='omardonky.html'">Home</button>
+        <h1>Word Builder Town</h1>
+        <select id="level-select" onchange="changeLevel()">
+            <option value="1">Level 1 (Animals)</option>
+            <option value="2" disabled>Level 2 (Actions)</option>
+            <option value="3" disabled>Level 3 (Places)</option>
+        </select>
+        <div id="town"><div id="mascot"></div></div>
+        <div id="drop-zone" ondrop="drop(event)" ondragover="allowDrop(event)" ondragleave="dragLeave(event)">Drop letters here</div>
+        <div id="letter-bank"></div>
+        <p id="feedback"></p>
+        <p id="score">Score: 0</p>
+        <p id="timer">Time Left: 30s</p>
+        <div class="controls">
+            <button onclick="checkWord()">Check Word</button>
+            <button onclick="resetGame()">Reset</button>
+            <button id="hint-btn" onclick="showHint()">Hint</button>
+            <button id="clear-btn" onclick="clearWord()">Clear Word</button>
+            <button id="pause-btn" onclick="togglePause()">Pause</button>
+        </div>
+        <div id="bonus-challenge">
+            <p>Spell "<span id="bonus-word"></span>" in <span id="bonus-time"></span>s for +10s!</p>
+            <input id="bonus-input" type="text" maxlength="10">
+            <button onclick="checkBonus()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+        const levels = {
+            1: { words: ["cat", "dog", "pig", "rat"], time: 30, points: 10 },
+            2: { words: ["jump", "kick", "swim", "dance"], time: 25, points: 20 },
+            3: { words: ["school", "forest", "market", "castle"], time: 20, points: 30 }
+        };
+        let currentLevel = 1;
+        let currentWord = "";
+        let buildingCount = 0; // Persistent across levels
+        let timeLeft = levels[currentLevel].time;
+        let timerInterval = null;
+        let correctWords = new Set();
+        let score = 0;
+        let unlockedLevels = [1];
+        let bonusActive = false;
+        let isPaused = false;
+        let availableLetters = [];
+        let targetWord = "";
+        const MAX_BUILDINGS = 15; // Define when the town is "finished"
+
+        // Start screen
+        function startGame() {
+            document.getElementById("start-screen").style.display = "none";
+            document.getElementById("game-container").style.display = "block";
+            initGame();
+        }
+
+        // Initialize game with letters for one specific word
+        function initGame() {
+            if (timerInterval) clearInterval(timerInterval);
+            if (!isPaused && !bonusActive) {
+                timeLeft = levels[currentLevel].time;
+                timerInterval = setInterval(countdown, 1000);
+            }
+            updateTimer();
+            updateTownTheme();
+
+            // Pick one random unused word from the level's list
+            const remainingWords = levels[currentLevel].words.filter(w => !correctWords.has(w));
+            if (remainingWords.length === 0) {
+                correctWords.clear(); // Reset correctWords if all words are used
+                targetWord = levels[currentLevel].words[Math.floor(Math.random() * levels[currentLevel].words.length)];
+            } else {
+                targetWord = remainingWords[Math.floor(Math.random() * remainingWords.length)];
+            }
+            availableLetters = targetWord.split("").sort(() => 0.5 - Math.random()); // Only use letters from this word
+
+            // Populate letter bank with exactly these letters
+            const letterBank = document.getElementById("letter-bank");
+            letterBank.innerHTML = "";
+            availableLetters.forEach(letter => {
+                const div = document.createElement("div");
+                div.className = "letter";
+                div.draggable = true;
+                div.textContent = letter;
+                div.ondragstart = drag;
+                letterBank.appendChild(div);
+            });
+            document.getElementById("drop-zone").textContent = "Drop letters here";
+            document.getElementById("feedback").textContent = "";
+            currentWord = "";
+            const mascot = document.getElementById("mascot");
+            if (mascot) mascot.classList.remove("cheer");
+        }
+
+        // Drag-and-drop functions
+        function allowDrop(event) {
+            if (!isPaused && !bonusActive) event.preventDefault();
+            event.target.classList.add("drag-over");
+        }
+
+        function dragLeave(event) {
+            event.target.classList.remove("drag-over");
+        }
+
+        function drag(event) {
+            if (!isPaused && !bonusActive) event.dataTransfer.setData("text", event.target.textContent);
+            event.target.style.opacity = "0.5";
+        }
+
+        function drop(event) {
+            if (isPaused || bonusActive) return;
+            event.preventDefault();
+            const letter = event.dataTransfer.getData("text");
+            currentWord += letter;
+            document.getElementById("drop-zone").textContent = currentWord;
+            event.target.classList.remove("drag-over");
+            const draggedLetter = Array.from(document.querySelectorAll(".letter"))
+                .find(el => el.textContent === letter && el.style.opacity === "0.5");
+            if (draggedLetter) draggedLetter.style.opacity = "1";
+            autoCheckWord();
+        }
+
+        // Auto-check word
+        function autoCheckWord() {
+            if (isPaused || bonusActive) return;
+            const feedback = document.getElementById("feedback");
+            const word = currentWord.toLowerCase();
+            const minLength = targetWord.length; // Use the target word's length
+            
+            if (word === targetWord && !correctWords.has(word)) {
+                feedback.textContent = "Great job!";
+                feedback.style.color = "green";
+                feedback.style.opacity = "1";
+                correctWords.add(word);
+                score += levels[currentLevel].points + (timeLeft > 10 ? 5 : 0);
+                updateScore();
+                addBuilding();
+                showWordFeedback(word);
+                document.getElementById("mascot").classList.add("cheer");
+                setTimeout(() => {
+                    feedback.style.opacity = "0";
+                    document.getElementById("mascot").classList.remove("cheer");
+                    currentWord = "";
+                    document.getElementById("drop-zone").textContent = "Drop letters here";
+                    if (buildingCount < MAX_BUILDINGS) {
+                        if (buildingCount % 3 === 0 && !bonusActive) { // Bonus every 3 buildings
+                            triggerBonusChallenge();
+                        } else {
+                            initGame();
+                        }
+                    }
+                }, 1000);
+            } else if (currentWord.length >= minLength) {
+                feedback.textContent = "Not the right word!";
+                feedback.style.color = "red";
+                feedback.style.opacity = "1";
+                setTimeout(() => feedback.style.opacity = "0", 1000);
+            }
+        }
+
+        // Add building with persistent count
+        function addBuilding() {
+            const town = document.getElementById("town");
+            const building = document.createElement("div");
+            building.className = "building";
+            building.style.left = `${20 + buildingCount * 60}px`; // Position based on total buildings
+            building.style.bottom = "10px";
+            building.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 50%)`;
+            town.appendChild(building);
+            buildingCount++;
+            updateTownTheme();
+
+            // Check if town is finished or level needs to progress
+            if (buildingCount % 5 === 0 && currentLevel < 3) { // Every 5 buildings, try to unlock next level
+                unlockNextLevel();
+                setTimeout(() => {
+                    alert(`Level ${currentLevel} unlocked! Score: ${score}`);
+                    currentLevel = Math.min(currentLevel + 1, 3); // Move to next level
+                    updateLevelSelect();
+                    initGame(); // Continue game with new level words
+                }, 500);
+            } else if (buildingCount >= MAX_BUILDINGS) {
+                clearInterval(timerInterval);
+                setTimeout(() => {
+                    alert(`Town complete with ${MAX_BUILDINGS} buildings! Final Score: ${score}`);
+                    resetGame(); // Reset to start screen after town is finished
+                }, 500);
+            }
+        }
+
+        // Progressive town theme
+        function updateTownTheme() {
+            const town = document.getElementById("town");
+            if (buildingCount >= 5) town.style.background = "linear-gradient(to bottom, #87CEEB, #7CFC00, #A0522D)";
+            if (buildingCount >= 10) town.style.background = "linear-gradient(to bottom, #87CEEB, #7CFC00, #A0522D, #4682B4)";
+        }
+
+        // Show visual word feedback
+        function showWordFeedback(word) {
+            const display = document.createElement("div");
+            display.id = "word-display";
+            display.textContent = word.toUpperCase();
+            document.getElementById("town").appendChild(display);
+            setTimeout(() => display.remove(), 1000);
+        }
+
+        // Scoring
+        function updateScore() {
+            document.getElementById("score").textContent = `Score: ${score}`;
+        }
+
+        // Hint function
+        function showHint() {
+            if (isPaused || bonusActive) return;
+            const feedback = document.getElementById("feedback");
+            if (!targetWord || correctWords.has(targetWord)) {
+                feedback.textContent = "No hints available!";
+                feedback.style.color = "red";
+                feedback.style.opacity = "1";
+                setTimeout(() => feedback.style.opacity = "0", 1500);
+                return;
+            }
+            const hintText = targetWord.length > 2 ? `${targetWord.slice(0, 2)}...` : `${targetWord[0]}...`;
+            feedback.textContent = `Hint: Starts with "${hintText}"`;
+            feedback.style.color = "#1E90FF";
+            feedback.style.opacity = "1";
+            setTimeout(() => feedback.style.opacity = "0", 2000);
+        }
+
+        // Clear word
+        function clearWord() {
+            if (isPaused || bonusActive) return;
+            currentWord = "";
+            document.getElementById("drop-zone").textContent = "Drop letters here";
+            document.getElementById("feedback").textContent = "Word cleared!";
+            document.getElementById("feedback").style.color = "#FF4500";
+            document.getElementById("feedback").style.opacity = "1";
+            setTimeout(() => document.getElementById("feedback").style.opacity = "0", 1000);
+        }
+
+        // Pause game
+        function togglePause() {
+            const pauseBtn = document.getElementById("pause-btn");
+            if (bonusActive) return; // Prevent pausing during bonus
+            if (isPaused) {
+                isPaused = false;
+                timerInterval = setInterval(countdown, 1000);
+                pauseBtn.textContent = "Pause";
+                document.getElementById("feedback").textContent = "Game resumed!";
+                document.getElementById("feedback").style.color = "green";
+            } else {
+                isPaused = true;
+                clearInterval(timerInterval);
+                pauseBtn.textContent = "Resume";
+                document.getElementById("feedback").textContent = "Game paused!";
+                document.getElementById("feedback").style.color = "#FFD700";
+            }
+            document.getElementById("feedback").style.opacity = "1";
+            setTimeout(() => document.getElementById("feedback").style.opacity = "0", 1000);
+        }
+
+        // Time bonus challenge
+        function triggerBonusChallenge() {
+            bonusActive = true;
+            clearInterval(timerInterval);
+            const bonusWords = ["fun", "win", "yes"];
+            const bonusWord = bonusWords[Math.floor(Math.random() * bonusWords.length)];
+            let bonusTime = 5;
+            document.getElementById("bonus-word").textContent = bonusWord;
+            document.getElementById("bonus-time").textContent = bonusTime;
+            document.getElementById("bonus-input").value = "";
+            document.getElementById("bonus-challenge").style.display = "block";
+            const bonusInterval = setInterval(() => {
+                bonusTime--;
+                document.getElementById("bonus-time").textContent = bonusTime;
+                if (bonusTime <= 0) {
+                    clearInterval(bonusInterval);
+                    endBonusChallenge(false);
+                }
+            }, 1000);
+        }
+
+        function checkBonus() {
+            const input = document.getElementById("bonus-input").value.toLowerCase();
+            const word = document.getElementById("bonus-word").textContent;
+            if (input === word) endBonusChallenge(true);
+        }
+
+        function endBonusChallenge(success) {
+            bonusActive = false;
+            document.getElementById("bonus-challenge").style.display = "none";
+            if (success) {
+                timeLeft += 10;
+                document.getElementById("feedback").textContent = "+10 seconds added!";
+                document.getElementById("feedback").style.color = "green";
+                document.getElementById("feedback").style.opacity = "1";
+                setTimeout(() => document.getElementById("feedback").style.opacity = "0", 1000);
+            }
+            initGame(); // Restart game state after bonus
+        }
+
+        // Timer
+        function countdown() {
+            if (!bonusActive && !isPaused) {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("feedback").textContent = "Time's up! Starting over!";
+                    document.getElementById("feedback").style.color = "red";
+                    setTimeout(() => resetGame(), 1500);
+                }
+            }
+        }
+
+        function updateTimer() {
+            document.getElementById("timer").textContent = `Time Left: ${timeLeft}s`;
+        }
+
+        // Level unlocking and auto-progression
+        function unlockNextLevel() {
+            if (!unlockedLevels.includes(currentLevel + 1) && currentLevel < 3) {
+                unlockedLevels.push(currentLevel + 1);
+            }
+            updateLevelSelect();
+        }
+
+        function updateLevelSelect() {
+            const select = document.getElementById("level-select");
+            Array.from(select.options).forEach(option => {
+                option.disabled = !unlockedLevels.includes(parseInt(option.value));
+            });
+            select.value = currentLevel;
+        }
+
+        function changeLevel() {
+            currentLevel = parseInt(document.getElementById("level-select").value);
+            resetGame();
+        }
+
+        function resetGame() {
+            buildingCount = 0;
+            correctWords.clear();
+            score = 0;
+            updateScore();
+            const town = document.getElementById("town");
+            town.innerHTML = "";
+            town.appendChild(document.createElement("div")).id = "mascot";
+            document.getElementById("game-container").style.display = "none";
+            document.getElementById("start-screen").style.display = "flex";
+        }
+
+        // Initial setup
+        document.addEventListener("DOMContentLoaded", () => {
+            updateLevelSelect();
+        });
+    </script>
+</body>
+</html>
