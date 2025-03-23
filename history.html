@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="Wondaura Logo (Smaller Text).svg" type="image/x-icon">
+    <title>History Time Travel: Trivia Adventure</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: background-image 1s ease-in-out;
+            overflow: auto;
+        }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 80%;
+            max-width: 900px;
+            min-height: 600px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        header {
+            background: linear-gradient(to right, #2c3e50, #4a6077);
+            color: #fff;
+            padding: 15px;
+            border-radius: 15px 15px 0 0;
+            text-align: center;
+            margin: -30px -30px 20px;
+            position: relative;
+        }
+
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5em;
+            margin: 0;
+        }
+
+        #home-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 8px 15px;
+            font-size: 1em;
+            background: linear-gradient(to right, #e67e22, #d35400);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #home-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #pause-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 15px;
+            font-size: 1em;
+            background: linear-gradient(to right, #8e44ad, #9b59b6);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        #pause-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #pause-btn.paused {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+
+        #progress-map {
+            display: flex;
+            justify-content: space-between;
+            margin: 20px 0;
+        }
+
+        .era-dot {
+            width: 20px;
+            height: 20px;
+            background: #95a5a6;
+            border-radius: 50%;
+            transition: all 0.5s;
+        }
+
+        .era-dot.active {
+            background: #27ae60;
+            transform: scale(1.3);
+        }
+
+        #timer {
+            font-size: 1.2em;
+            color: #e74c3c;
+            margin-bottom: 10px;
+        }
+
+        #era-display, #score {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin: 15px 0;
+            font-weight: 700;
+        }
+
+        #question-text {
+            font-size: 1.6em;
+            color: #34495e;
+            margin: 20px 0;
+            line-height: 1.4;
+        }
+
+        #options {
+            display: grid;
+            gap: 15px;
+        }
+
+        .option-btn {
+            padding: 12px;
+            font-size: 1.2em;
+            background: linear-gradient(to right, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .option-btn.selected {
+            background: linear-gradient(to right, #e74c3c, #c0392b);
+        }
+
+        #submit-btn, #travel-btn, #restart-btn {
+            padding: 14px 25px;
+            font-size: 1.2em;
+            background: linear-gradient(to right, #27ae60, #219653);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        #submit-btn:disabled, #travel-btn:disabled, #restart-btn:disabled, .option-btn:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        #submit-btn:hover:not(:disabled), #travel-btn:hover:not(:disabled), #restart-btn:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+        }
+
+        #feedback {
+            font-size: 1.2em;
+            margin: 20px 0;
+            min-height: 25px;
+            font-weight: 500;
+        }
+
+        #time-machine {
+            position: relative;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        #travel-btn::before {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            width: 40px;
+            height: 40px;
+            background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0iI2ZmZiIgZD0iTTEyIDJDNy4wMyAyIDIgNy4wMyAyIDEyczUuMDMgMTAgMTAgMTAgMTAtNS4wMyAxMC0xMFMxNi45NyAyIDEyIDJ6bTAgMTRjLTMuMzEgMC02LTIuNjktNi02czIuNjktNiA6LTYgNiAyLjY5IDYgNi0yLjY5IDYtNiA2em0yLjUtOC41bC00IDQtNCA0IDEtMSAxLjUtMS41IDMuNS0zLjUtMS41IDEuNS0xIDEgNCA0eiIvPjwvc3ZnPg==') no-repeat center;
+            background-size: contain;
+            transform: translateX(-50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        #travel-btn:hover::before {
+            opacity: 0.8;
+        }
+
+        #travel-btn.traveling {
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            text-align: center;
+        }
+
+        @media (max-width: 1366px) {
+            .game-container { width: 85%; max-width: 800px; }
+            #question-text { font-size: 1.4em; }
+            .option-btn { font-size: 1.1em; }
+        }
+
+        @media (max-width: 500px) {
+            h1 { font-size: 1.8em; }
+            .option-btn { font-size: 0.9em; padding: 10px; }
+            #submit-btn, #travel-btn, #restart-btn { font-size: 1em; padding: 12px 20px; }
+            .game-container { padding: 15px; width: 90%; }
+            #progress-map { margin: 10px 0; }
+            .era-dot { width: 15px; height: 15px; }
+            #home-btn, #pause-btn { font-size: 0.9em; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <header>
+            <h1>History Time Travel Adventure</h1>
+            <a href="omardonky.html"><button id="home-btn">Return Home</button></a>
+            <button id="pause-btn">Pause</button>
+        </header>
+        <div id="progress-map"></div>
+        <div id="timer">Time Left: --s</div>
+        <div id="era-display">Era: <span id="current-era">Colonial America</span></div>
+        <div id="score">Score: <span id="score-value">0</span></div>
+        <div id="question-container">
+            <p id="question-text"></p>
+            <div id="options"></div>
+            <button id="submit-btn" disabled>Submit Answer</button>
+        </div>
+        <div id="feedback"></div>
+        <div id="time-machine">
+            <button id="travel-btn" disabled>Travel to Next Era</button>
+        </div>
+        <button id="restart-btn">Restart</button>
+        <footer>Powered by Wondaura | © 2025</footer>
+    </div>
+
+    <script>
+        const eras = [
+            { name: "Colonial America", background: "https://images.pexels.com/photos/2356045/pexels-photo-2356045.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "American Revolution", background: "https://images.pexels.com/photos/11285096/pexels-photo-11285096.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "Early Republic", background: "https://images.pexels.com/photos/532826/pexels-photo-532826.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "Civil War", background: "https://images.pexels.com/photos/11285095/pexels-photo-11285095.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "Reconstruction", background: "https://images.pexels.com/photos/2356047/pexels-photo-2356047.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "Industrial Age", background: "https://images.pexels.com/photos/301614/pexels-photo-301614.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "World War I", background: "https://images.pexels.com/photos/11285094/pexels-photo-11285094.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "Great Depression", background: "https://images.pexels.com/photos/163148/pexels-photo-163148.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "World War II", background: "https://images.pexels.com/photos/11285093/pexels-photo-11285093.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" },
+            { name: "Modern America", background: "https://images.pexels.com/photos/1117210/pexels-photo-1117210.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" }
+        ];
+
+        const questions = [
+            {
+                era: "Colonial America",
+                question: { easy: "What crop helped Jamestown survive?", medium: "Which crop was most important to Jamestown?", hard: "Which crop funded Jamestown’s early economy?" },
+                options: ["Tobacco", "Corn", "Wheat", "Rice"],
+                answer: "Tobacco",
+                fact: "Tobacco was so valuable it was used as currency!"
+            },
+            {
+                era: "American Revolution",
+                question: { easy: "Who wrote the Declaration?", medium: "Who was the main author of the Declaration of Independence?", hard: "Which founding father drafted the Declaration in 1776?" },
+                options: ["George Washington", "Thomas Jefferson", "Benjamin Franklin", "John Adams"],
+                answer: "Thomas Jefferson",
+                fact: "Jefferson was only 33 when he wrote it!"
+            },
+            {
+                era: "Early Republic",
+                question: { easy: "What big land did the U.S. buy in 1803?", medium: "What was the 1803 land purchase from France?", hard: "What doubled the U.S. size under Jefferson?" },
+                options: ["Missouri Compromise", "Louisiana Purchase", "Gadsden Purchase", "Texas Annexation"],
+                answer: "Louisiana Purchase",
+                fact: "It cost just 15 million dollars!"
+            },
+            {
+                era: "Civil War",
+                question: { easy: "Who was president during the Civil War?", medium: "Who led the U.S. during the Civil War?", hard: "Which president issued the Emancipation Proclamation?" },
+                options: ["Abraham Lincoln", "Ulysses S. Grant", "Jefferson Davis", "Andrew Johnson"],
+                answer: "Abraham Lincoln",
+                fact: "Lincoln grew his famous beard after a girl’s suggestion!"
+            },
+            {
+                era: "Reconstruction",
+                question: { easy: "What ended slavery in the U.S.?", medium: "Which amendment abolished slavery?", hard: "Which amendment, ratified in 1865, ended slavery?" },
+                options: ["13th", "14th", "15th", "19th"],
+                answer: "13th",
+                fact: "It was ratified after the Civil War ended!"
+            },
+            {
+                era: "Industrial Age",
+                question: { easy: "What invention sped up travel?", medium: "What powered the Industrial Revolution in the U.S.?", hard: "Which invention revolutionized transportation in the 1800s?" },
+                options: ["Telephone", "Steam Engine", "Light Bulb", "Airplane"],
+                answer: "Steam Engine",
+                fact: "Steam engines powered trains and ships!"
+            },
+            {
+                era: "World War I",
+                question: { easy: "What war did the U.S. join in 1917?", medium: "Which war involved trenches in Europe?", hard: "Which global conflict ended with the Treaty of Versailles?" },
+                options: ["Civil War", "World War I", "World War II", "Vietnam War"],
+                answer: "World War I",
+                fact: "The U.S. entered late but helped end it!"
+            },
+            {
+                era: "Great Depression",
+                question: { easy: "What caused a big money crash in 1929?", medium: "What event started the Great Depression?", hard: "Which stock market crash triggered a decade of hardship?" },
+                options: ["Gold Rush", "Stock Market Crash", "Dust Bowl", "World War"],
+                answer: "Stock Market Crash",
+                fact: "It began on Black Tuesday, October 29, 1929!"
+            },
+            {
+                era: "World War II",
+                question: { easy: "What war did the U.S. join after Pearl Harbor?", medium: "Which war ended with atomic bombs?", hard: "Which conflict saw the U.S. fight Japan and Germany?" },
+                options: ["World War I", "World War II", "Korean War", "Cold War"],
+                answer: "World War II",
+                fact: "The U.S. dropped bombs on Hiroshima and Nagasaki!"
+            },
+            {
+                era: "Modern America",
+                question: { easy: "Which number amendment let women vote?", medium: "Which amendment gave women the right to vote?", hard: "Which 1920 amendment granted women suffrage?" },
+                options: ["15th", "19th", "13th", "21st"],
+                answer: "19th",
+                fact: "Women fought for this right for over 70 years!"
+            }
+        ];
+
+        const difficultySettings = {
+            easy: { time: 45, points: 5 },
+            medium: { time: 30, points: 10 },
+            hard: { time: 15, points: 15 }
+        };
+
+        let currentEraIndex = 0;
+        let score = 0;
+        let selectedAnswer = null;
+        let currentDifficulty = "easy";
+        let timeLeft = difficultySettings[currentDifficulty].time;
+        let timerInterval;
+        let correctStreak = 0;
+        let isPaused = false;
+
+        const gameContainer = document.getElementById("game-container");
+        const eraDisplay = document.getElementById("current-era");
+        const scoreDisplay = document.getElementById("score-value");
+        const questionText = document.getElementById("question-text");
+        const optionsContainer = document.getElementById("options");
+        const submitBtn = document.getElementById("submit-btn");
+        const travelBtn = document.getElementById("travel-btn");
+        const restartBtn = document.getElementById("restart-btn");
+        const feedback = document.getElementById("feedback");
+        const timerDisplay = document.getElementById("timer");
+        const progressMap = document.getElementById("progress-map");
+        const pauseBtn = document.getElementById("pause-btn");
+
+        function initializeProgressMap() {
+            progressMap.innerHTML = "";
+            eras.forEach((era, index) => {
+                const dot = document.createElement("span");
+                dot.classList.add("era-dot");
+                dot.dataset.era = index;
+                progressMap.appendChild(dot);
+            });
+        }
+
+        const savedProgress = JSON.parse(localStorage.getItem("historyGame"));
+        if (savedProgress) {
+            currentEraIndex = savedProgress.currentEraIndex;
+            score = savedProgress.score;
+            scoreDisplay.textContent = score;
+        }
+
+        initializeProgressMap();
+        startGame();
+
+        function startGame() {
+            updateEra();
+            loadQuestion();
+            updateProgress();
+            restartBtn.style.display = "inline-block";
+            submitBtn.style.display = "inline-block";
+            travelBtn.style.display = "inline-block";
+            timerDisplay.style.display = "block";
+        }
+
+        function updateEra() {
+            eraDisplay.textContent = eras[currentEraIndex].name;
+            document.body.style.backgroundImage = `url(${eras[currentEraIndex].background})`;
+        }
+
+        function updateProgress() {
+            document.querySelectorAll(".era-dot").forEach(dot => {
+                dot.classList.toggle("active", parseInt(dot.dataset.era) === currentEraIndex);
+            });
+            saveProgress();
+        }
+
+        function adjustDifficulty() {
+            if (correctStreak >= 3) {
+                if (currentDifficulty === "easy") {
+                    currentDifficulty = "medium";
+                    feedback.textContent += " Difficulty increased to Medium!";
+                } else if (currentDifficulty === "medium") {
+                    currentDifficulty = "hard";
+                    feedback.textContent += " Difficulty increased to Hard!";
+                }
+                correctStreak = 0;
+            }
+            timeLeft = difficultySettings[currentDifficulty].time;
+        }
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentEraIndex];
+            questionText.textContent = currentQuestion.question[currentDifficulty];
+            optionsContainer.innerHTML = "";
+            selectedAnswer = null;
+            submitBtn.disabled = true;
+            travelBtn.disabled = true;
+            feedback.textContent = "";
+            timeLeft = difficultySettings[currentDifficulty].time;
+            timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+
+            if (timerInterval) clearInterval(timerInterval);
+            if (!isPaused) {
+                timerInterval = setInterval(() => {
+                    timeLeft--;
+                    timerDisplay.textContent = `Time Left: ${timeLeft}s`;
+                    if (timeLeft <= 0) {
+                        clearInterval(timerInterval);
+                        feedback.textContent = `Time's up! The answer was "${currentQuestion.answer}". Fact: ${currentQuestion.fact}`;
+                        feedback.style.color = "#e74c3c";
+                        travelBtn.disabled = false;
+                        submitBtn.disabled = true;
+                        correctStreak = 0;
+                    }
+                }, 1000);
+            }
+
+            currentQuestion.options.forEach(option => {
+                const btn = document.createElement("button");
+                btn.textContent = option;
+                btn.classList.add("option-btn");
+                btn.addEventListener("click", () => selectAnswer(option, btn));
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function selectAnswer(option, btn) {
+            if (isPaused) return;
+            selectedAnswer = option;
+            document.querySelectorAll(".option-btn").forEach(button => {
+                button.classList.remove("selected");
+            });
+            btn.classList.add("selected");
+            submitBtn.disabled = false;
+        }
+
+        submitBtn.addEventListener("click", () => {
+            if (isPaused) return;
+            const currentQuestion = questions[currentEraIndex];
+            clearInterval(timerInterval);
+            if (selectedAnswer === currentQuestion.answer) {
+                score += difficultySettings[currentDifficulty].points;
+                scoreDisplay.textContent = score;
+                feedback.textContent = `Correct! Fun Fact: ${currentQuestion.fact}`;
+                feedback.style.color = "#27ae60";
+                travelBtn.disabled = false;
+                correctStreak++;
+                adjustDifficulty();
+            } else {
+                feedback.textContent = `Incorrect. The answer was "${currentQuestion.answer}". Fact: ${currentQuestion.fact}`;
+                feedback.style.color = "#e74c3c";
+                travelBtn.disabled = false;
+                correctStreak = 0;
+            }
+            submitBtn.disabled = true;
+        });
+
+        travelBtn.addEventListener("click", () => {
+            if (isPaused) return;
+            travelBtn.classList.add("traveling");
+            setTimeout(() => {
+                travelBtn.classList.remove("traveling");
+                currentEraIndex++;
+                if (currentEraIndex < eras.length) {
+                    updateEra();
+                    loadQuestion();
+                    updateProgress();
+                } else {
+                    endGame();
+                }
+            }, 1000);
+        });
+
+        restartBtn.addEventListener("click", () => {
+            if (isPaused) return;
+            currentEraIndex = 0;
+            score = 0;
+            scoreDisplay.textContent = score;
+            currentDifficulty = "easy";
+            correctStreak = 0;
+            localStorage.removeItem("historyGame");
+            clearInterval(timerInterval);
+            startGame();
+        });
+
+        pauseBtn.addEventListener("click", () => {
+            isPaused = !isPaused;
+            pauseBtn.textContent = isPaused ? "Resume" : "Pause";
+            pauseBtn.classList.toggle("paused", isPaused);
+
+            if (isPaused) {
+                clearInterval(timerInterval);
+                document.querySelectorAll(".option-btn").forEach(btn => btn.disabled = true);
+                submitBtn.disabled = true;
+                travelBtn.disabled = true;
+            } else {
+                loadQuestion(); // Restart timer when resuming
+                document.querySelectorAll(".option-btn").forEach(btn => btn.disabled = false);
+            }
+        });
+
+        function endGame() {
+            questionText.textContent = "Mission Complete, Time Traveler!";
+            optionsContainer.innerHTML = "";
+            submitBtn.style.display = "none";
+            travelBtn.style.display = "none";
+            feedback.textContent = `Final Score: ${score}. You've mastered U.S. history!`;
+            feedback.style.color = "#2c3e50";
+            document.body.style.backgroundImage = "none";
+            clearInterval(timerInterval);
+            timerDisplay.style.display = "none";
+            localStorage.removeItem("historyGame");
+        }
+
+        function saveProgress() {
+            localStorage.setItem("historyGame", JSON.stringify({ currentEraIndex, score }));
+        }
+    </script>
+</body>
+</html>     
