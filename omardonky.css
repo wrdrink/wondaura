@@ -96,44 +96,87 @@ body {
     opacity: 1;
 }
 
-.search-bar {
-    position: absolute;
-    top: 15px;
-    left: 50%;
-    transform: translateX(-50%);
+.hero {
+    position: relative;
+    min-height: 100vh;
     display: flex;
-    z-index: 10;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #2A2A2A;
+    overflow: hidden;
+}
+
+.slideshow-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+.mySlides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+    background-size: cover;
+    background-position: center;
+}
+
+.mySlides.active {
+    opacity: 1;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+}
+
+.search-bar {
+    margin: 20px auto;
     width: 90%;
-    max-width: 300px;
+    max-width: 400px;
+    display: flex;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 20px;
+    padding: 5px;
 }
 
 .search-bar input {
     padding: 0.5rem;
     font-size: 0.9rem;
-    border: 2px solid #B7B1F2; /* Purple */
+    border: none;
     outline: none;
     width: 100%;
-    background: #FFFFFF;
+    background: transparent;
     color: #2A2A2A;
 }
 
 .search-bar button {
     padding: 0.5rem;
-    background: #FDB7EA; /* Pink */
-    border: 2px solid #B7B1F2;
-    border-left: none;
+    background: #FDB7EA;
+    border: none;
     color: #2A2A2A;
     cursor: pointer;
     transition: background 0.3s ease;
+    border-radius: 50%;
 }
 
 .search-bar button:hover {
-    background: #B7B1F2; /* Purple */
+    background: #B7B1F2;
 }
 
 .highlight {
-    background-color: #FFDCCC; /* Peach */
-    transition: background-color 1.2s ease;
+    background-color: #FFDCCC;
+    padding: 2px 5px;
+    border-radius: 3px;
+    transition: background-color 1s ease;
 }
 
 .sidebar {
@@ -176,9 +219,9 @@ body {
 }
 
 .sidebar-nav h1 {
-    font-size: 1.5rem;
+    font-size: clamp(2rem, 4vw, 2.5rem);
     color: #2A2A2A;
-    margin: 0;
+    margin: 1rem 0;
     padding: 0.5rem 0;
     word-wrap: break-word;
     max-width: 100%;
@@ -209,45 +252,84 @@ body {
     transform: translateX(5px);
 }
 
-.hero {
-    position: relative;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
+.hero .container {
+    margin: 20px auto;
+}
+
+.hero h1 {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    margin-bottom: 1rem;
     color: #2A2A2A;
-    background: #FBF3B9; /* Light yellow */
+    text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.8);
 }
 
-.slideshow-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1;
+.hero p {
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    margin-bottom: 2rem;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.game-nav-buttons {
+    margin: 20px auto;
     display: flex;
-    overflow: hidden;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
 }
 
-.mySlides {
-    min-width: 100%;
-    transition: transform 1s ease;
-}
-
-.mySlides img {
+.game-nav-buttons h2 {
+    font-size: clamp(1.2rem, 3vw, 1.8rem);
+    color: #2A2A2A;
+    margin-bottom: 10px;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
+    text-shadow: 1px 1px 3px rgba(255, 255, 255, 0.8);
+}
+
+.game-btn {
+    padding: 0.8rem 1.5rem;
+    background: #FDB7EA;
+    color: #2A2A2A;
+    border: 3px solid #B7B1F2;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    width: 100%;
+    max-width: 250px;
+    text-align: center;
+}
+
+.game-btn:hover {
+    background: #B7B1F2;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.btn {
+    padding: 0.8rem 1.5rem;
+    background: #FDB7EA;
+    color: #2A2A2A;
+    border: 3px solid #B7B1F2;
+    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
+    font-weight: bold;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.btn:hover {
+    background: #B7B1F2;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
 .dots-container {
-    position: absolute;
-    bottom: 20px;
+    margin: 20px auto;
     width: 100%;
     text-align: center;
-    z-index: 10;
 }
 
 .dot {
@@ -263,85 +345,10 @@ body {
 }
 
 .active, .dot:hover {
-    background-color: #B7B1F2; /* Purple */
+    background-color: #B7B1F2;
 }
 
-.hero .container {
-    z-index: 1;
-}
-
-.hero h1 {
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    margin-bottom: 1rem;
-    color: #2A2A2A;
-}
-
-.hero p {
-    font-size: clamp(1rem, 3vw, 1.5rem);
-    margin-bottom: 2rem;
-}
-
-.game-nav-buttons {
-    position: absolute;
-    bottom: 60px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    z-index: 10;
-    width: 90%;
-    max-width: 600px;
-}
-
-.game-nav-buttons h2 {
-    font-size: clamp(1.2rem, 3vw, 1.8rem);
-    color: #2A2A2A;
-    margin-bottom: 10px;
-}
-
-.game-btn {
-    padding: 0.8rem 1.5rem;
-    background: #FDB7EA; /* Pink */
-    color: #2A2A2A;
-    border: 3px solid #B7B1F2; /* Purple */
-    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    width: 100%;
-    max-width: 250px;
-    text-align: center;
-}
-
-.game-btn:hover {
-    background: #B7B1F2; /* Purple */
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.btn {
-    padding: 0.8rem 1.5rem;
-    background: #FDB7EA; /* Pink */
-    color: #2A2A2A;
-    border: 3px solid #B7B1F2; /* Purple */
-    font-size: clamp(0.9rem, 2.5vw, 1.2rem);
-    font-weight: bold;
-    text-decoration: none;
-    cursor: pointer;
-    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-}
-
-.btn:hover {
-    background: #B7B1F2; /* Purple */
-    transform: translateY(-3px);
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
+/* Rest of the CSS remains largely unchanged, just adjusting layout */
 .about-section, .services-section, .friends-section {
     padding: 2rem 0;
     margin: 0;
@@ -349,15 +356,15 @@ body {
 }
 
 .about-section {
-    background: #FFDCCC; /* Peach */
+    background: #FFDCCC;
 }
 
 .services-section {
-    background: #FBF3B9; /* Yellow */
+    background: #FBF3B9;
 }
 
 .friends-section {
-    background: #FFDCCC; /* Peach */
+    background: #FFDCCC;
 }
 
 .about-section h2, .services-section h2, .friends-section h2 {
@@ -368,7 +375,7 @@ body {
 
 .featured-section {
     padding: 2rem 0;
-    background: #B7B1F2; /* Purple */
+    background: #B7B1F2;
     margin: 0;
     text-align: center;
 }
@@ -406,7 +413,7 @@ body {
 
 .lez-section {
     padding: 2rem 0;
-    background: #FDB7EA; /* Pink */
+    background: #FDB7EA;
     margin: 0;
 }
 
@@ -448,7 +455,7 @@ body {
 
 .highlighted-section {
     padding: 2rem 0;
-    background: #FFDCCC; /* Peach */
+    background: #FFDCCC;
     margin: 0;
     text-align: center;
 }
@@ -495,7 +502,7 @@ body {
 
 .image-text-section {
     padding: 2rem 0;
-    background: #FBF3B9; /* Yellow */
+    background: #FBF3B9;
     margin: 0;
 }
 
@@ -535,7 +542,7 @@ body {
 
 .sponsors-section {
     padding: 2rem 0;
-    background: #B7B1F2; /* Purple */
+    background: #B7B1F2;
     margin: 0;
     text-align: center;
 }
@@ -556,7 +563,7 @@ body {
 .sponsor-circle {
     width: clamp(80px, 15vw, 100px);
     height: clamp(80px, 15vw, 100px);
-    background: #FFDCCC; /* Peach */
+    background: #FFDCCC;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -571,11 +578,11 @@ body {
 }
 
 .main-footer {
-    background: #FDB7EA; /* Pink */
+    background: #FDB7EA;
     color: #2A2A2A;
     text-align: center;
     padding: 1rem 0;
-    border-top: 4px solid #B7B1F2; /* Purple */
+    border-top: 4px solid #B7B1F2;
 }
 
 .main-footer .social-link {
@@ -587,7 +594,7 @@ body {
 }
 
 .main-footer .social-link:hover {
-    color: #B7B1F2; /* Purple */
+    color: #B7B1F2;
 }
 
 .scroll-to-top {
@@ -596,9 +603,9 @@ body {
     right: 20px;
     width: 40px;
     height: 40px;
-    background: #FDB7EA; /* Pink */
+    background: #FDB7EA;
     color: #2A2A2A;
-    border: 2px solid #B7B1F2; /* Purple */
+    border: 2px solid #B7B1F2;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -608,7 +615,7 @@ body {
 }
 
 .scroll-to-top:hover {
-    background: #B7B1F2; /* Purple */
+    background: #B7B1F2;
     transform: translateY(-3px);
 }
 
@@ -625,19 +632,19 @@ body {
 }
 
 .card {
-    background: #FFDCCC; /* Peach */
+    background: #FFDCCC;
     padding: 1rem;
     text-align: center;
     flex: 1;
     min-width: clamp(120px, 25vw, 200px);
     max-width: 200px;
     cursor: pointer;
-    border: 2px solid #B7B1F2; /* Purple */
+    border: 2px solid #B7B1F2;
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .card:hover {
-    background: #FDB7EA; /* Pink */
+    background: #FDB7EA;
     transform: scale(1.05);
 }
 
@@ -659,18 +666,18 @@ body {
 }
 
 .friend-card {
-    background: #FFDCCC; /* Peach */
+    background: #FFDCCC;
     padding: 1rem;
     text-align: center;
     flex: 1;
     min-width: clamp(120px, 25vw, 200px);
     max-width: 200px;
-    border: 2px solid #B7B1F2; /* Purple */
+    border: 2px solid #B7B1F2;
     transition: background 0.3s ease;
 }
 
 .friend-card:hover {
-    background: #FDB7EA; /* Pink */
+    background: #FDB7EA;
 }
 
 .friend-image {
@@ -694,7 +701,7 @@ body {
 }
 
 .messages-list li {
-    background: #FBF3B9; /* Yellow */
+    background: #FBF3B9;
     padding: 0.5rem 1rem;
     margin-bottom: 0.5rem;
     color: #2A2A2A;
@@ -717,10 +724,6 @@ body {
 
     .hero {
         min-height: 80vh;
-    }
-
-    .game-nav-buttons {
-        bottom: 40px;
     }
 }
 
