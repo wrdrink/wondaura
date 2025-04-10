@@ -42,25 +42,43 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    // Improved search function
     searchButton.addEventListener('click', () => {
         const query = searchInput.value.trim().toLowerCase();
         if (!query) {
             alert('Please enter a search term!');
             return;
         }
+
+        // Remove existing highlights
         document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
-        const elements = document.querySelectorAll('body *:not(script):not(style)');
+
+        // Search through all relevant content
+        const searchableElements = document.querySelectorAll(
+            '.hero h1, .hero p, .game-btn, .card h3, .card p, .featured-text h2, .featured-text p, ' +
+            '.lez-content h2, .lez-content p, .highlighted-text h2, .highlighted-text p, ' +
+            '.text-content h2, .text-content p'
+        );
+        
         let found = false;
-        elements.forEach(el => {
-            if (el.textContent.toLowerCase().includes(query) && el.offsetParent !== null) {
+        let firstMatch = null;
+
+        searchableElements.forEach(el => {
+            const textContent = el.textContent.toLowerCase();
+            if (textContent.includes(query)) {
                 el.classList.add('highlight');
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                setTimeout(() => el.classList.remove('highlight'), 1200);
+                if (!firstMatch) firstMatch = el;
                 found = true;
             }
         });
-        if (!found) {
-            alert('No matching content found!');
+
+        if (found) {
+            firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                document.querySelectorAll('.highlight').forEach(el => el.classList.remove('highlight'));
+            }, 3000); // Highlight lasts for 3 seconds
+        } else {
+            alert(`No results found for "${query}"`);
         }
     });
 
@@ -71,27 +89,37 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
+// Slideshow functionality
 let slideIndex = 0;
 showSlides();
 
 function showSlides() {
     const slides = document.getElementsByClassName("mySlides");
     const dots = document.getElementsByClassName("dot");
-    console.log("Slides found:", slides.length);
+    
     if (slides.length === 0) {
         console.error("No slides detected!");
         return;
     }
+
+    // Remove active class from all slides and dots
     for (let i = 0; i < slides.length; i++) {
-        slides[i].style.display = "none";
-    }
-    slideIndex++;
-    if (slideIndex > slides.length) { slideIndex = 1; }
-    for (let i = 0; i < dots.length; i++) {
+        slides[i].classList.remove("active");
         dots[i].className = dots[i].className.replace(" active", "");
     }
-    slides[slideIndex - 1].style.display = "block";
+
+    slideIndex++;
+    if (slideIndex > slides.length) {
+        slideIndex = 1;
+    }
+
+    // Set background image and active class
+    const currentSlide = slides[slideIndex - 1];
+    const bgImage = currentSlide.getAttribute('data-bg');
+    currentSlide.style.backgroundImage = `url('${bgImage}')`;
+    currentSlide.classList.add("active");
     dots[slideIndex - 1].className += " active";
+    
     setTimeout(showSlides, 6000);
 }
 
@@ -100,6 +128,7 @@ function currentSlide(n) {
     showSlides();
 }
 
+// Rest of the functions remain unchanged
 function selectGrade(grade) {
     document.querySelector('.grade-cards').classList.add('hidden');
     document.getElementById('subjectSelection').classList.remove('hidden');
