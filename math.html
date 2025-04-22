@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Digestive Dash!</title>
+  <link href="https://fonts.googleapis.com/css2?family=Comic+Sans+MS&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Comic Sans MS', cursive;
+      color: #fff;
+      overflow: hidden;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      animation: twinkle 5s infinite;
+    }
+    body.mouth { background: url('mouth-bg.jpeg') no-repeat center/cover; }
+    body.stomach { background: url('stomach-bg.jpeg') no-repeat center/cover; }
+    body.intestines { background: url('intestines-bg.jpeg') no-repeat center/cover; }
+    body.halloween { background: url('halloween-bg.jpeg') no-repeat center/cover; }
+    @keyframes twinkle {
+      0% { filter: brightness(1); }
+      50% { filter: brightness(1.2); }
+      100% { filter: brightness(1); }
+    }
+    .mascot {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 80px;
+      height: 80px;
+      background: url('https://via.placeholder.com/80x80?text=Enzyme+Mascot') no-repeat center/contain;
+      animation: bounceMascot 1s infinite;
+      z-index: 2;
+    }
+    @keyframes bounceMascot {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    .game-container {
+      width: 95%;
+      max-width: 900px;
+      background: rgba(255, 255, 255, 0.9);
+      padding: 25px;
+      border-radius: 25px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+      text-align: center;
+      border: 5px solid #ffeb3b;
+      z-index: 1;
+    }
+    .lang-screen, .start-screen, .game-screen, .story-screen, .minigame-screen, .customize-screen, .map-screen {
+      display: none;
+    }
+    .lang-screen.active, .start-screen.active, .game-screen.active, .story-screen.active, .minigame-screen.active, .customize-screen.active, .map-screen.active {
+      display: block;
+    }
+    .arabic {
+      font-family: 'Amiri', serif;
+      direction: rtl;
+      text-align: right;
+    }
+    h1 {
+      font-size: 3em;
+      color: #ff4081;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 10px;
+      animation: wiggle 1.5s infinite;
+    }
+    @keyframes wiggle {
+      0% { transform: rotate(-2deg); }
+      50% { transform: rotate(2deg); }
+      100% { transform: rotate(-2deg); }
+    }
+    p {
+      font-size: 1.4em;
+      color: #333;
+      margin: 10px 0;
+      line-height: 1.3;
+    }
+    .character-select, .lang-select, .customize-select {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 15px 0;
+    }
+    .character-option, .lang-option, .customize-option {
+      width: 100px;
+      height: 100px;
+      background-size: contain;
+      background-repeat: no-repeat;
+      cursor: pointer;
+      transition: transform 0.3s;
+      border: 4px solid #ffeb3b;
+      border-radius: 20px;
+      animation: bounce 1.2s infinite;
+    }
+    .lang-option, .customize-option {
+      background: linear-gradient(45deg, #00cc00, #66ff66);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6em;
+      color: #fff;
+      border: none;
+    }
+    .character-option:hover, .lang-option:hover, .customize-option:hover {
+      transform: scale(1.2);
+    }
+    .character-option.selected, .customize-option.selected {
+      border-color: #ff4081;
+      transform: scale(1.1);
+    }
+    .track {
+      width: 100%;
+      height: 90px;
+      border-radius: 45px;
+      position: relative;
+      margin: 15px 0;
+      border: 4px solid #00cc00;
+      animation: rainbowTrack 3s infinite;
+      box-shadow: 0 0 20px rgba(0, 204, 0, 0.6);
+      overflow: hidden;
+    }
+    .track.mouth { background: url('mouth-texture.jpeg') repeat-x; }
+    .track.stomach { background: url('stomach-texture.jpeg') repeat-x; }
+    .track.intestines { background: url('intestines-texture.jpeg') repeat-x; }
+    @keyframes rainbowTrack {
+      0% { filter: hue-rotate(0deg); }
+      100% { filter: hue-rotate(360deg); }
+    }
+    .progress {
+      height: 100%;
+      background: linear-gradient(90deg, #ffeb3b, #ffd700);
+      width: 0;
+      border-radius: 45px;
+      transition: width 0.7s ease-in-out;
+      box-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+      position: relative;
+    }
+    .progress.glow {
+      animation: glowBar 0.7s;
+    }
+    @keyframes glowBar {
+      0% { box-shadow: 0 0 20px rgba(255, 215, 0, 1); }
+      100% { box-shadow: 0 0 10px rgba(255, 215, 0, 0.8); }
+    }
+    .character {
+      width: 70px;
+      height: 70px;
+      background-size: contain;
+      position: absolute;
+      top: 10px;
+      left: 0;
+      transition: left 0.7s ease-in-out;
+      z-index: 2;
+      animation: wobble 0.5s infinite;
+    }
+    .character.running {
+      animation: wobble 0.3s infinite, sparkleTrail 0.5s infinite;
+    }
+    .character.attacking {
+      animation: attack 0.4s;
+    }
+    .character.player2 {
+      top: 20px;
+    }
+    @keyframes wobble {
+      0% { transform: rotate(-5deg); }
+      50% { transform: rotate(5deg); }
+      100% { transform: rotate(-5deg); }
+    }
+    @keyframes sparkleTrail {
+      0% { box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+      100% { box-shadow: 0 0 20px rgba(255, 255, 255, 1); }
+    }
+    @keyframes attack {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
+    }
+    .bacteria {
+      width: 60px;
+      height: 60px;
+      background: url('bacteria.png') no-repeat center/contain;
+      position: absolute;
+      top: 15px;
+      right: 10px;
+      animation: bounceBacteria 0.8s infinite;
+      z-index: 1;
+    }
+    .bacteria.explode {
+      transform: scale(1.5);
+      opacity: 0;
+      animation: explode 0.4s;
+    }
+    @keyframes bounceBacteria {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    @keyframes explode {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    .power-up {
+      width: 40px;
+      height: 40px;
+      background: url('power-up.png') no-repeat center/contain;
+      position: absolute;
+      top: 25px;
+      left: 50%;
+      animation: bouncePowerUp 1s infinite;
+      z-index: 1;
+      display: none;
+    }
+    .power-up.active {
+      display: block;
+    }
+    @keyframes bouncePowerUp {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    .numbers {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin: 15px 0;
+      font-size: 3.5em;
+      color: #ff4081;
+    }
+    .numbers.player2 {
+      margin-top: 10px;
+    }
+    .number {
+      background: linear-gradient(45deg, #ffeb3b, #ffd700);
+      padding: 15px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+      border: 3px solid #00cc00;
+      animation: pulse 1.5s infinite;
+    }
+    .number.fade {
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.4s, transform 0.4s;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 25px;
+      margin: 15px 0;
+    }
+    .controls.player2 {
+      margin-top: 10px;
+    }
+    button {
+      padding: 12px 35px;
+      font-size: 1.6em;
+      background: linear-gradient(45deg, #ff4081, #ff80ab);
+      border: none;
+      color: white;
+      border-radius: 15px;
+      cursor: pointer;
+      transition: transform 0.3s;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+      animation: bounceButton 1s infinite;
+    }
+    button:hover {
+      transform: scale(1.15);
+    }
+    .hint-btn {
+      background: linear-gradient(45deg, #00cc00, #66ff66);
+    }
+    .mute-btn, .home-btn, .music-btn, .accessibility-btn {
+      position: absolute;
+      top: 10px;
+      padding: 8px;
+      font-size: 1.3em;
+      border-radius: 10px;
+    }
+    .mute-btn {
+      right: 10px;
+      background: #ffeb3b;
+      color: #333;
+    }
+    .home-btn {
+      right: 60px;
+      background: linear-gradient(45deg, #ffd700, #ffeb3b);
+      color: #333;
+    }
+    .music-btn {
+      right: 110px;
+      background: #00cc00;
+      color: #fff;
+    }
+    .accessibility-btn {
+      right: 160px;
+      background: #2196f3;
+      color: #fff;
+    }
+    .pause-overlay, .edu-popup, .accessibility-menu {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: 10;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .pause-overlay.active, .edu-popup.active, .accessibility-menu.active {
+      display: flex;
+    }
+    .pause-overlay h2, .edu-popup h2, .accessibility-menu h2 {
+      font-size: 2.5em;
+      color: #ff4081;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+      margin-bottom: 20px;
+      animation: wiggle 1.5s infinite;
+    }
+    .pause-overlay button, .edu-popup button, .accessibility-menu button {
+      padding: 15px 40px;
+      font-size: 1.8em;
+      background: linear-gradient(45deg, #00cc00, #66ff66);
+    }
+    .feedback {
+      font-size: 1.8em;
+      margin: 10px 0;
+      color: #00cc00;
+      opacity: 0;
+      transform: scale(0.8);
+      transition: opacity 0.5s, transform 0.5s;
+      text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    }
+    .feedback.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+    .enzymes {
+      position: absolute;
+      top: 10px;
+      left: 110px;
+      font-size: 1.3em;
+      color: #ff4081;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .enzyme-star {
+      width: 35px;
+      height: 35px;
+      background: url('enzyme-star.png') no-repeat center/contain;
+      animation: spinStar 0.8s infinite;
+    }
+    @keyframes spinStar {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .sparkles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      display: none;
+      z-index: 3;
+    }
+    .sparkles.active {
+      display: block;
+    }
+    .story-video {
+      width: 100%;
+      max-width: 500px;
+      border-radius: 15px;
+      margin: 15px auto;
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+    }
+    .story-choices {
+      display: flex;
+      gap: 20px;
+      margin: 15px 0;
+    }
+    .stage-text {
+      font-size: 1.6em;
+      color: #ff4081;
+      margin: 15px 0;
+    }
+    .minigame-canvas {
+      width: 100%;
+      max-width: 500px;
+      height: 300px;
+      border: 4px solid #ffeb3b;
+      border-radius: 15px;
+      margin: 15px auto;
+    }
+    .map {
+      width: 100%;
+      max-width: 600px;
+      height: 300px;
+      background: url('tummy-town-map.png') no-repeat center/contain;
+      position: relative;
+      margin: 15px auto;
+    }
+    .map-marker {
+      width: 40px;
+      height: 40px;
+      background: url('map-marker.png') no-repeat center/contain;
+      position: absolute;
+      animation: bounceMarker 1s infinite;
+    }
+    @keyframes bounceMarker {
+      0% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
+    }
+    .colorblind .number {
+      background: linear-gradient(45deg, #2196f3, #90caf9);
+      border: 3px solid #f44336;
+    }
+    .large-text h1 { font-size: 4em; }
+    .large-text p { font-size: 1.8em; }
+    .large-text button { font-size: 2em; }
+    @media (max-width: 600px) {
+      h1 { font-size: 2.2em; }
+      p { font-size: 1.1em; }
+      .numbers { font-size: 2.5em; gap: 30px; }
+      .number { padding: 10px 20px; }
+      button { padding: 10px 25px; font-size: 1.3em; }
+      .track { height: 70px; }
+      .character { width: 50px; height: 50px; top: 10px; }
+      .bacteria { width: 45px; height: 45px; top: 12px; right: 8px; }
+      .character-option, .lang-option, .customize-option { width: 80px; height: 80px; }
+      .enzymes { font-size: 1.1em; left: 90px; }
+      .enzyme-star { width: 25px; height: 25px; }
+      .mascot { width: 60px; height: 60px; }
+      .feedback { font-size: 1.4em; }
+      .story-video { max-width: 90%; }
+      .mute-btn, .home-btn, .music-btn, .accessibility-btn { padding: 6px; font-size: 1.1em; }
+      .home-btn { right: 50px; }
+      .music-btn { right: 90px; }
+      .accessibility-btn { right: 130px; }
+      .pause-overlay h2, .edu-popup h2, .accessibility-menu h2 { font-size: 2em; }
+      .pause-overlay button, .edu-popup button, .accessibility-menu button { padding: 10px 30px; font-size: 1.5em; }
+      .large-text h1 { font-size: 3em; }
+      .large-text p { font-size: 1.4em; }
+      .large-text button { font-size: 1.6em; }
+    }
+  </style>
+</head>
+<body class="mouth">
+  <div class="mascot"></div>
+  <div class="game-container">
+    <div class="lang-screen active">
+      <h1 id="lang-title">Digestive Dash! 🌟</h1>
+      <p id="lang-instruction">Pick a language, hero!</p>
+      <div class="lang-select">
+        <div class="lang-option" data-lang="en">English</div>
+        <div class="lang-option" data-lang="ar">العربية</div>
+      </div>
+    </div>
+    <div class="start-screen">
+      <h1 id="start-title">Digestive Dash! 🍔</h1>
+      <p id="start-instruction">The silly Germ King is messing up Tummy Town! Pick a Food Hero to zap his yucky bacteria with number magic!</p>
+      <p id="start-pick">Choose your hero:</p>
+      <div class="character-select">
+        <div class="character-option" data-character="hamburger" style="background-image: url('hamburger.png');"></div>
+        <div class="character-option" data-character="hotdog" style="background-image: url('hotdog.png');"></div>
+        <div class="character-option" data-character="can" style="background-image: url('can.png');"></div>
+      </div>
+      <button id="customize-btn" onclick="showCustomize()">Customize Hero</button>
+      <button id="multiplayer-btn" onclick="toggleMultiplayer()">Multiplayer Mode</button>
+      <button id="start-btn" onclick="showMap()">Let’s Save Tummy Town!</button>
+    </div>
+    <div class="customize-screen">
+      <h1 id="customize-title">Customize Your Hero! 🎨</h1>
+      <p id="customize-instruction">Make your hero unique!</p>
+      <div class="customize-select">
+        <div class="customize-option" data-accessory="hat">Hat</div>
+        <div class="customize-option" data-accessory="glasses">Glasses</div>
+        <div class="customize-option" data-color="red">Red</div>
+        <div class="customize-option" data-color="blue">Blue</div>
+      </div>
+      <button onclick="saveCustomization()">Save & Continue</button>
+    </div>
+    <div class="map-screen">
+      <h1 id="map-title">Tummy Town Map 🗺️</h1>
+      <p id="map-instruction">Your progress in Tummy Town!</p>
+      <div class="map">
+        <div class="map-marker" id="mouth-marker" style="left: 20%; top: 20%;"></div>
+        <div class="map-marker" id="stomach-marker" style="left: 50%; top: 50%;"></div>
+        <div class="map-marker" id="intestines-marker" style="left: 80%; top: 80%;"></div>
+      </div>
+      <button onclick="showStory('intro')">Start Adventure</button>
+    </div>
+    <div class="story-screen">
+      <h1 id="story-title">Adventure Time! 🎉</h1>
+      <p class="stage-text" id="stage-text"></p>
+      <video class="story-video" id="story-video" autoplay controls>
+        <source src="" type="video/mp4">
+      </video>
+      <div class="story-choices" id="story-choices">
+        <button id="choice1" onclick="makeStoryChoice('easy')">Easy Path</button>
+        <button id="choice2" onclick="makeStoryChoice('hard')">Hard Path</button>
+      </div>
+      <button id="story-btn" onclick="nextStage()">Go, Hero, Go!</button>
+    </div>
+    <div class="game-screen">
+      <button class="mute-btn" id="mute-btn" onclick="toggleMute()">Mute</button>
+      <button class="home-btn" id="home-btn" onclick="goHome()">🛖 Home</button>
+      <button class="music-btn" id="music-btn" onclick="changeMusic()">Next Music</button>
+      <button class="accessibility-btn" id="accessibility-btn" onclick="showAccessibility()">Accessibility</button>
+      <h1 id="game-title">Zap the Bacteria! 💥</h1>
+      <div class="enzymes">
+        <span id="enzymes">0</span>
+        <div class="enzyme-star"></div>
+      </div>
+      <div class="track">
+        <div class="progress">
+          <div class="bacteria" id="bacteria"></div>
+          <div class="power-up" id="power-up"></div>
+        </div>
+        <div class="character" id="character1"></div>
+        <div class="character player2" id="character2"></div>
+      </div>
+      <div class="numbers" id="numbers1">
+        <div id="number1" class="number">0</div>
+        <div id="number2" class="number">0</div>
+      </div>
+      <div class="controls" id="controls1">
+        <button onclick="checkAnswer('<', 1)"><</button>
+        <button onclick="checkAnswer('=', 1)">=</button>
+        <button onclick="checkAnswer('>', 1)">></button>
+        <button class="hint-btn" onclick="showHint(1)">Help!</button>
+        <button id="pause-btn" onclick="togglePause()">Pause</button>
+      </div>
+      <div class="numbers player2" id="numbers2">
+        <div id="number3" class="number">0</div>
+        <div id="number4" class="number">0</div>
+      </div>
+      <div class="controls player2" id="controls2">
+        <button onclick="checkAnswer('<', 2)"><</button>
+        <button onclick="checkAnswer('=', 2)">=</button>
+        <button onclick="checkAnswer('>', 2)">></button>
+        <button class="hint-btn" onclick="showHint(2)">Help!</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+      <button class="hint-btn" id="edu-btn" onclick="showEduPopup()">Learn More!</button>
+    </div>
+    <div class="minigame-screen">
+      <h1 id="minigame-title">Food Sort Mini-Game! 🍎</h1>
+      <p id="minigame-instruction">Sort the food particles before continuing!</p>
+      <canvas class="minigame-canvas" id="minigame-canvas"></canvas>
+      <button onclick="completeMinigame()">Finish</button>
+    </div>
+  </div>
+  <div class="pause-overlay" id="pause-overlay">
+    <h2 id="pause-title">Game Paused! 😴</h2>
+    <button id="resume-btn" onclick="togglePause()">Resume</button>
+  </div>
+  <div class="edu-popup" id="edu-popup">
+    <h2 id="edu-title">Did You Know? 📚</h2>
+    <p id="edu-fact"></p>
+    <button onclick="closeEduPopup()">Cool!</button>
+  </div>
+  <div class="accessibility-menu" id="accessibility-menu">
+    <h2 id="accessibility-title">Accessibility Options ⚙️</h2>
+    <button onclick="toggleColorblind()">Toggle Colorblind Mode</button>
+    <button onclick="toggleLargeText()">Toggle Large Text</button>
+    <button onclick="closeAccessibility()">Save</button>
+  </div>
+  <canvas class="sparkles" id="sparkles"></canvas>
+
+  <audio id="bgMusic1" loop preload="auto"></audio>
+  <audio id="bgMusic2" loop preload="auto"></audio>
+  <audio id="bgMusic3" loop preload="auto"></audio>
+  <audio id="correctSound" preload="auto"></audio>
+  <audio id="hintSound" preload="auto"></audio>
+  <audio id="winSound" preload="auto"></audio>
+  <audio id="zapSound" preload="auto"></audio>
+  <audio id="pauseSound" preload="auto"></audio>
+  <audio id="powerUpSound" preload="auto"></audio>
+
+  <script>
+    let currentPosition = [0, 0];
+    let isGameActive = false;
+    let enzymes = [0, 0];
+    let selectedCharacter = ['hamburger', 'hotdog'];
+    let characterCustomization = [{ accessory: '', color: '' }, { accessory: '', color: '' }];
+    let isMuted = false;
+    let currentStage = 'mouth';
+    let language = 'en';
+    let lastClickTime = [0, 0];
+    let maxNumber = 20;
+    let isMultiplayer = false;
+    let currentMusic = 1;
+    let isColorblind = false;
+    let isLargeText = false;
+    let storyChoice = 'easy';
+    let stars = 0;
+    let unlockedItems = ['hamburger', 'hotdog', 'can'];
+    let isSeasonalEvent = false;
+    let difficultyLevel = 1;
+
+    // Translations
+    const translations = {
+      en: {
+        langTitle: 'Digestive Dash! 🌟',
+        langInstruction: 'Pick a language, hero!',
+        startTitle: 'Digestive Dash! 🍔',
+        startInstruction: 'The silly Germ King is messing up Tummy Town! Pick a Food Hero to zap his yucky bacteria with number magic!',
+        startPick: 'Choose your hero:',
+        startBtn: 'Let’s Save Tummy Town!',
+        customizeTitle: 'Customize Your Hero! 🎨',
+        customizeInstruction: 'Make your hero unique!',
+        mapTitle: 'Tummy Town Map 🗺️',
+        mapInstruction: 'Your progress in Tummy Town!',
+        storyTitle: 'Adventure Time! 🎉',
+        storyBtn: 'Go, Hero, Go!',
+        stageIntro: 'Oh no! The Germ King’s bacteria are in Tummy Town’s Mouth! Zap them with numbers! 😄',
+        stageMouth: 'Yay! You popped the Mouth bacteria! Zoom to the Stomach! 🚀',
+        stageStomach: 'Wow! Stomach bacteria gone! Tummy Town is saved! 🎈',
+        gameTitle: 'Zap the Bacteria! 💥',
+        muteBtn: 'Mute',
+        unmuteBtn: 'Unmute',
+        homeBtn: '🛖 Home',
+        musicBtn: 'Next Music',
+        accessibilityBtn: 'Accessibility',
+        pauseBtn: 'Pause',
+        resumeBtn: 'Resume',
+        pauseTitle: 'Game Paused! 😴',
+        hintBtn: 'Help!',
+        eduBtn: 'Learn More!',
+        feedbackCorrect: 'BOOM! You zapped it! 🌟',
+        feedbackIncorrect: 'Oops, try again! 😊',
+        feedbackWin: 'You saved Tummy Town! Super Hero! 🎉',
+        feedbackPowerUp: 'Power-Up Grabbed! 🚀',
+        hintSmaller: 'The left number is smaller! 🔍',
+        hintBigger: 'The left number is bigger! 🔎',
+        hintEqual: 'The numbers are the same! 😄',
+        minigameTitle: 'Food Sort Mini-Game! 🍎',
+        minigameInstruction: 'Sort the food particles before continuing!',
+        eduTitle: 'Did You Know? 📚',
+        accessibilityTitle: 'Accessibility Options ⚙️',
+        multiplayerBtn: 'Multiplayer Mode',
+        multiplayerOffBtn: 'Single Player Mode'
+      },
+      ar: {
+        langTitle: 'سباق الهضم! 🌟',
+        langInstruction: 'اختر لغة، يا بطل!',
+        startTitle: 'سباق الهضم! 🍔',
+        startInstruction: 'ملك الجراثيم المضحك يعبث بمدينة البطن! اختر بطل الطعام لتفجير جراثيمه السيئة بسحر الأرقام!',
+        startPick: 'اختر بطلك:',
+        startBtn: 'لننقذ مدينة البطن!',
+        customizeTitle: 'خصص بطلك! 🎨',
+        customizeInstruction: 'اجعل بطلك فريدًا!',
+        mapTitle: 'خريطة مدينة البطن 🗺️',
+        mapInstruction: 'تقدمك في مدينة البطن!',
+        storyTitle: 'وقت المغامرة! 🎉',
+        storyBtn: 'انطلق، يا بطل!',
+        stageIntro: 'أوه لا! جراثيم ملك الجراثيم في فم مدينة البطن! فجرها بالأرقام! 😄',
+        stageMouth: 'رائع! لقد فجرت جراثيم الفم! انطلق إلى المعدة! 🚀',
+        stageStomach: 'واو! جراثيم المعدة اختفت! لقد أنقذت مدينة البطن! 🎈',
+        gameTitle: 'فجر الجراثيم! 💥',
+        muteBtn: 'كتم الصوت',
+        unmuteBtn: 'إلغاء الكتم',
+        homeBtn: '🛖 الرئيسية',
+        musicBtn: 'الموسيقى التالية',
+        accessibilityBtn: 'إمكانية الوصول',
+        pauseBtn: 'إيقاف',
+        resumeBtn: 'استئناف',
+        pauseTitle: 'اللعبة متوقفة! 😴',
+        hintBtn: 'مساعدة!',
+        eduBtn: 'تعلم المزيد!',
+        feedbackCorrect: 'بوم! لقد فجرتها! 🌟',
+        feedbackIncorrect: 'أوبس، حاول مرة أخرى! 😊',
+        feedbackWin: 'لقد أنقذت مدينة البطن! بطل خارق! 🎉',
+        feedbackPowerUp: 'تم أخذ القوة! 🚀',
+        hintSmaller: 'الرقم الأيسر أصغر! 🔍',
+        hintBigger: 'الرقم الأيسر أكبر! 🔎',
+        hintEqual: 'الأرقام متساوية! 😄',
+        minigameTitle: 'لعبة فرز الطعام! 🍎',
+        minigameInstruction: 'فرز جزيئات الطعام قبل المتابعة!',
+        eduTitle: 'هل تعلم؟ 📚',
+        accessibilityTitle: 'خيارات إمكانية الوصول ⚙️',
+        multiplayerBtn: 'وضع اللاعبين المتعددين',
+        multiplayerOffBtn: 'وضع اللاعب الفردي'
+      }
+    };
+
+    // Educational facts
+    const eduFacts = {
+      mouth: ['Saliva starts breaking down food in the mouth!', 'Teeth grind food into smaller pieces!'],
+      stomach: ['The stomach uses acid to digest food!', 'Stomach muscles churn food into a liquid!'],
+      intestines: ['The small intestine absorbs nutrients!', 'The large intestine removes water from waste!']
+    };
+
+    // Asset paths
+    const assets = {
+      bgMusic: {
+        1: 'happy-whistling-ukulele-115485.mp3',
+        2: 'upbeat-acoustic-114973.mp3',
+        3: 'cheerful-acoustic-115972.mp3'
+      },
+      correctSound: 'https://assets.mixkit.co/sfx/preview/mixkit-magical-sparkle-2391.mp3',
+      hintSound: 'https://assets.mixkit.co/sfx/preview/mixkit-sparkle-idea-ding-2205.mp3',
+      winSound: 'https://assets.mixkit.co/sfx/preview/mixkit-fanfare-triumph-1516.mp3',
+      zapSound: 'laser-zap-90575.mp3',
+      pauseSound: 'https://assets.mixkit.co/sfx/preview/mixkit-cartoon-bubble-pop-736.mp3',
+      powerUpSound: 'https://assets.mixkit.co/sfx/preview/mixkit-positive-notification-958.mp3',
+      characters: {
+        hamburger: 'hamburger.png',
+        hotdog: 'hotdog.png',
+        can: 'can.png',
+        candy: 'candy.png' // Seasonal event character
+      },
+      videos: {
+        intro: 'https://via.placeholder.com/video?text=Intro+Story',
+        mouth: 'https://via.placeholder.com/video?text=Mouth+Victory',
+        stomach: 'https://via.placeholder.com/video?text=Stomach+Victory'
+      }
+    };
+
+    const bgMusic1 = document.getElementById('bgMusic1');
+    const bgMusic2 = document.getElementById('bgMusic2');
+    const bgMusic3 = document.getElementById('bgMusic3');
+    const correctSound = document.getElementById('correctSound');
+    const hintSound = document.getElementById('hintSound');
+    const winSound = document.getElementById('winSound');
+    const zapSound = document.getElementById('zapSound');
+    const pauseSound = document.getElementById('pauseSound');
+    const powerUpSound = document.getElementById('powerUpSound');
+
+    // Load audio assets
+    function loadAudio(audio, src) {
+      audio.src = src;
+      audio.volume = 0.6;
+      audio.load();
+      audio.oncanplaythrough = () => audio.dataset.loaded = 'true';
+      audio.onerror = () => console.warn(`Failed to load audio: ${src}`);
+    }
+
+    loadAudio(bgMusic1, assets.bgMusic[1]);
+    loadAudio(bgMusic2, assets.bgMusic[2]);
+    loadAudio(bgMusic3, assets.bgMusic[3]);
+    loadAudio(correctSound, assets.correctSound);
+    loadAudio(hintSound, assets.hintSound);
+    loadAudio(winSound, assets.winSound);
+    loadAudio(zapSound, assets.zapSound);
+    loadAudio(pauseSound, assets.pauseSound);
+    loadAudio(powerUpSound, assets.powerUpSound);
+
+    // Voice narration (placeholder using browser speech synthesis)
+    function speak(text) {
+      if (isMuted || !window.speechSynthesis) return;
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = language === 'en' ? 'en-US' : 'ar-SA';
+      utterance.volume = 0.8;
+      speechSynthesis.speak(utterance);
+    }
+
+    // Haptic feedback
+    function vibrate() {
+      if (navigator.vibrate && !isMuted) {
+        navigator.vibrate(200);
+      }
+    }
+
+    // Check for seasonal event (e.g., Halloween in October)
+    function checkSeasonalEvent() {
+      const now = new Date();
+      if (now.getMonth() === 9) { // October
+        isSeasonalEvent = true;
+        document.body.classList.add('halloween');
+        if (!unlockedItems.includes('candy')) {
+          unlockedItems.push('candy');
+          showFeedback('New seasonal character unlocked: Candy!');
+        }
+      }
+    }
+
+    function updateLanguage() {
+      const t = translations[language];
+      document.getElementById('lang-title').textContent = t.langTitle;
+      document.getElementById('lang-instruction').textContent = t.langInstruction;
+      document.getElementById('start-title').textContent = t.startTitle;
+      document.getElementById('start-instruction').textContent = t.startInstruction;
+      document.getElementById('start-pick').textContent = t.startPick;
+      document.getElementById('start-btn').textContent = t.startBtn;
+      document.getElementById('customize-title').textContent = t.customizeTitle;
+      document.getElementById('customize-instruction').textContent = t.customizeInstruction;
+      document.getElementById('map-title').textContent = t.mapTitle;
+      document.getElementById('map-instruction').textContent = t.mapInstruction;
+      document.getElementById('story-title').textContent = t.storyTitle;
+      document.getElementById('story-btn').textContent = t.storyBtn;
+      document.getElementById('game-title').textContent = t.gameTitle;
+      document.getElementById('mute-btn').textContent = isMuted ? t.unmuteBtn : t.muteBtn;
+      document.getElementById('home-btn').textContent = t.homeBtn;
+      document.getElementById('music-btn').textContent = t.musicBtn;
+      document.getElementById('accessibility-btn').textContent = t.accessibilityBtn;
+      document.getElementById('pause-btn').textContent = t.pauseBtn;
+      document.getElementById('resume-btn').textContent = t.resumeBtn;
+      document.getElementById('pause-title').textContent = t.pauseTitle;
+      document.getElementById('edu-btn').textContent = t.eduBtn;
+      document.getElementById('edu-title').textContent = t.eduTitle;
+      document.getElementById('accessibility-title').textContent = t.accessibilityTitle;
+      document.getElementById('multiplayer-btn').textContent = isMultiplayer ? t.multiplayerOffBtn : t.multiplayerBtn;
+      document.querySelector('.game-container').classList.toggle('arabic', language === 'ar');
+      document.querySelectorAll('.controls button').forEach(btn => {
+        btn.style.direction = language === 'ar' ? 'rtl' : 'ltr';
+      });
+      if (language === 'ar') {
+        document.querySelectorAll('.character').forEach(char => {
+          char.style.left = 'auto';
+          char.style.right = '0';
+        });
+        document.querySelector('.bacteria').style.right = 'auto';
+        document.querySelector('.bacteria').style.left = '10px';
+        document.querySelector('.progress').style.transform = 'scaleX(-1)';
+        document.queryQuerySelector('.home-btn').style.right = 'auto';
+        document.querySelector('.home-btn').style.left = '160px';
+        document.querySelector('.mute-btn').style.right = 'auto';
+        document.querySelector('.mute-btn').style.left = '10px';
+        document.querySelector('.music-btn').style.right = 'auto';
+        document.querySelector('.music-btn').style.left = '60px';
+        document.querySelector('.accessibility-btn').style.right = 'auto';
+        document.querySelector('.accessibility-btn').style.left = '110px';
+      } else {
+        document.querySelectorAll('.character').forEach(char => {
+          char.style.right = 'auto';
+          char.style.left = '0';
+        });
+        document.querySelector('.bacteria').style.left = 'auto';
+        document.querySelector('.bacteria').style.right = '10px';
+        document.querySelector('.progress').style.transform = 'scaleX(1)';
+        document.querySelector('.home-btn').style.left = 'auto';
+        document.querySelector('.home-btn').style.right = '160px';
+        document.querySelector('.mute-btn').style.left = 'auto';
+        document.querySelector('.mute-btn').style.right = '10px';
+        document.querySelector('.music-btn').style.left = 'auto';
+        document.querySelector('.music-btn').style.right = '60px';
+        document.querySelector('.accessibility-btn').style.left = 'auto';
+        document.querySelector('.accessibility-btn').style.right = '110px';
+      }
+      speak(t.gameTitle);
+    }
+
+    function selectLanguage(lang) {
+      language = lang;
+      updateLanguage();
+      document.querySelector('.lang-screen').classList.remove('active');
+      document.querySelector('.start-screen').classList.add('active');
+      checkSeasonalEvent();
+    }
+
+    function showCustomize() {
+      document.querySelector('.start-screen').classList.remove('active');
+      document.querySelector('.customize-screen').classList.add('active');
+    }
+
+    function saveCustomization() {
+      document.querySelectorAll('.customize-option').forEach(option => {
+        if (option.classList.contains('selected')) {
+          if (option.dataset.accessory) {
+            characterCustomization[0].accessory = option.dataset.accessory;
+            characterCustomization[1].accessory = option.dataset.accessory;
+          } else if (option.dataset.color) {
+            characterCustomization[0].color = option.dataset.color;
+            characterCustomization[1].color = option.dataset.color;
+          }
+        }
+      });
+      document.querySelector('.customize-screen').classList.remove('active');
+      document.querySelector('.start-screen').classList.add('active');
+    }
+
+    function showMap() {
+      document.querySelector('.start-screen').classList.remove('active');
+      document.querySelector('.map-screen').classList.add('active');
+      updateMap();
+    }
+
+    function updateMap() {
+      document.getElementById('mouth-marker').style.opacity = currentStage === 'mouth' || currentStage === 'stomach' || currentStage === 'intestines' ? 1 : 0.3;
+      document.getElementById('stomach-marker').style.opacity = currentStage === 'stomach' || currentStage === 'intestines' ? 1 : 0.3;
+      document.getElementById('intestines-marker').style.opacity = currentStage === 'intestines' ? 1 : 0.3;
+    }
+
+    function toggleMultiplayer() {
+      isMultiplayer = !isMultiplayer;
+      document.getElementById('multiplayer-btn').textContent = isMultiplayer ? translations[language].multiplayerOffBtn : translations[language].multiplayerBtn;
+      document.getElementById('controls2').style.display = isMultiplayer ? 'flex' : 'none';
+      document.getElementById('numbers2').style.display = isMultiplayer ? 'flex' : 'none';
+      document.getElementById('character2').style.display = isMultiplayer ? 'block' : 'none';
+      if (isMultiplayer) {
+        currentPosition[1] = 0;
+        enzymes[1] = 0;
+        document.getElementById('enzymes').textContent = `${enzymes[0]} (${enzymes[1]})`;
+      }
+    }
+
+    function showStory(stage) {
+      const storyScreen = document.querySelector('.story-screen');
+      const stageText = document.getElementById('stage-text');
+      const video = document.getElementById('story-video');
+      const choices = document.getElementById('story-choices');
+      document.querySelector('.start-screen').classList.remove('active');
+      document.querySelector('.game-screen').classList.remove('active');
+      document.querySelector('.map-screen').classList.remove('active');
+      storyScreen.classList.add('active');
+
+      const t = translations[language];
+      if (stage === 'intro') {
+        stageText.textContent = t.stageIntro;
+        video.src = assets.videos.intro;
+        choices.style.display = 'flex';
+      } else if (stage === 'mouth') {
+        stageText.textContent = t.stageMouth;
+        video.src = assets.videos.mouth;
+        choices.style.display = 'none';
+      } else if (stage === 'stomach') {
+        stageText.textContent = t.stageStomach;
+        video.src = assets.videos.stomach;
+        choices.style.display = 'none';
+      }
+      video.load();
+      if (!isMuted) video.play();
+      speak(stageText.textContent);
+    }
+
+    function makeStoryChoice(choice) {
+      storyChoice = choice;
+      maxNumber = choice === 'easy' ? 20 : 50;
+      difficultyLevel = choice === 'easy' ? 1 : 2;
+      document.getElementById('story-choices').style.display = 'none';
+    }
+
+    function nextStage() {
+      document.querySelector('.story-screen').classList.remove('active');
+      document.querySelector('.minigame-screen').classList.add('active');
+      startMinigame();
+    }
+
+    function startMinigame() {
+      const canvas = document.getElementById('minigame-canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 500;
+      canvas.height = 300;
+
+      const foods = [
+        { x: 50, y: 50, type: 'good', grabbed: false },
+        { x: 150, y: 100, type: 'bad', grabbed: false },
+        { x: 250, y: 150, type: 'good', grabbed: false },
+        { x: 350, y: 200, type: 'bad', grabbed: false }
+      ];
+      let score = 0;
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        foods.forEach(food => {
+          if (!food.grabbed) {
+            ctx.fillStyle = food.type === 'good' ? '#00cc00' : '#ff0000';
+            ctx.beginPath();
+            ctx.arc(food.x, food.y, 20, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        });
+        ctx.fillStyle = '#333';
+        ctx.font = '20px Comic Sans MS';
+        ctx.fillText(`Score: ${score}`, 10, 30);
+      }
+
+      canvas.onmousedown = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        foods.forEach(food => {
+          if (!food.grabbed && Math.hypot(x - food.x, y - food.y) < 20) {
+            food.grabbed = true;
+            score += food.type === 'good' ? 10 : -5;
+            vibrate();
+          }
+        });
+        draw();
+      };
+
+      draw();
+    }
+
+    function completeMinigame() {
+      document.querySelector('.minigame-screen').classList.remove('active');
+      document.querySelector('.game-screen').classList.add('active');
+      startGame();
+    }
+
+    function generateNumbers(player) {
+      const num1 = Math.floor(Math.random() * maxNumber) + 1;
+      let num2 = Math.floor(Math.random() * maxNumber) + 1;
+      while (num2 === num1) {
+        num2 = Math.floor(Math.random() * maxNumber) + 1;
+      }
+      const number1 = document.getElementById(`number${player * 2 - 1}`);
+      const number2 = document.getElementById(`number${player * 2}`);
+      number1.classList.add('fade');
+      number2.classList.add('fade');
+      setTimeout(() => {
+        number1.textContent = num1;
+        number2.textContent = num2;
+        number1.classList.remove('fade');
+        number2.classList.remove('fade');
+      }, 400);
+      document.getElementById('bacteria').classList.remove('explode');
+      return [num1, num2];
+    }
+
+    function showFeedback(message) {
+      const feedback = document.getElementById('feedback');
+      feedback.textContent = message;
+      feedback.classList.add('show');
+      setTimeout(() => feedback.classList.remove('show'), 1500);
+      speak(message);
+    }
+
+    function showSparkles() {
+      const canvas = document.getElementById('sparkles');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      canvas.classList.add('active');
+
+      const particles = [];
+      for (let i = 0; i < 20; i++) {
+        particles.push({
+          x: language === 'ar' ? canvas.width * 0.15 : canvas.width * 0.85,
+          y: canvas.height * 0.5,
+          size: Math.random() * 5 + 2,
+          speedX: Math.random() * 4 - 2,
+          speedY: Math.random() * 4 - 2,
+          color: `hsl(${Math.random() * 360}, 100%, 80%)`
+        });
+      }
+
+      let frameCount = 0;
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          p.x += p.speedX;
+          p.y += p.speedY;
+          p.size *= 0.96;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size / 2, 0, Math.PI * 2);
+          ctx.fill();
+        });
+        frameCount++;
+        if (frameCount < 20) requestAnimationFrame(animate);
+        else canvas.classList.remove('active');
+      }
+      animate();
+    }
+
+    function checkAnswer(operator, player) {
+      const now = Date.now();
+      if (now - lastClickTime[player - 1] < 500 || !isGameActive) return;
+      lastClickTime[player - 1] = now;
+
+      const nums = [
+        parseInt(document.getElementById(`number${player * 2 - 1}`).textContent),
+        parseInt(document.getElementById(`number${player * 2}`).textContent)
+      ];
+
+      let correct = false;
+      if (operator === '<') correct = nums[0] < nums[1];
+      else if (operator === '>') correct = nums[0] > nums[1];
+      else correct = nums[0] === nums[1];
+
+      const character = document.getElementById(`character${player}`);
+      const bacteria = document.getElementById('bacteria');
+      const progress = document.querySelector('.progress');
+      const powerUp = document.getElementById('power-up');
+      const t = translations[language];
+
+      if (correct) {
+        const increment = powerUp.classList.contains('active') ? 30 : 20;
+        currentPosition[player - 1] = Math.min(100, currentPosition[player - 1] + increment);
+        enzymes[player - 1]++;
+        stars += difficultyLevel;
+        document.getElementById('enzymes').textContent = isMultiplayer ? `${enzymes[0]} (${enzymes[1]})` : enzymes[0];
+        character.classList.add('attacking');
+        bacteria.classList.add('explode');
+        progress.classList.add('glow');
+        showSparkles();
+        showFeedback(t.feedbackCorrect);
+        vibrate();
+        if (!isMuted && zapSound.dataset.loaded) zapSound.play();
+        if (!isMuted && correctSound.dataset.loaded) correctSound.play();
+
+        progress.style.width = `${Math.max(...currentPosition)}%`;
+        document.getElementById(`character${player}`).style[language === 'ar' ? 'right' : 'left'] = `${currentPosition[player - 1]}%`;
+
+        if (Math.random() < 0.2 && !powerUp.classList.contains('active')) {
+          powerUp.classList.add('active');
+          setTimeout(() => {
+            powerUp.classList.remove('active');
+            showFeedback(t.feedbackPowerUp);
+            if (!isMuted && powerUpSound.dataset.loaded) powerUpSound.play();
+          }, 3000);
+        }
+
+        setTimeout(() => {
+          character.classList.remove('attacking');
+          bacteria.classList.remove('explode');
+          progress.classList.remove('glow');
+        }, 400);
+
+        if (currentPosition[player - 1] >= 50 && currentStage === 'mouth') {
+          isGameActive = false;
+          currentStage = 'stomach';
+          document.body.className = 'stomach';
+          document.querySelector('.track').className = 'track stomach';
+          if (!isMuted && winSound.dataset.loaded) winSound.play();
+          showStory('mouth');
+        } else if (currentPosition[player - 1] >= 100) {
+          isGameActive = false;
+          currentStage = 'intestines';
+          document.body.className = 'intestines';
+          document.querySelector('.track').className = 'track intestines';
+          if (!isMuted && winSound.dataset.loaded) winSound.play();
+          showFeedback(t.feedbackWin);
+          unlockRewards();
+          setTimeout(() => showStory('stomach'), 1500);
+        } else {
+          generateNumbers(player);
+        }
+      } else {
+        if (!isMuted && hintSound.dataset.loaded) hintSound.play();
+        showFeedback(t.feedbackIncorrect);
+      }
+
+      adjustDifficulty();
+    }
+
+    function adjustDifficulty() {
+      const performance = enzymes[0] / (enzymes[0] + 1);
+      if (performance > 0.8) {
+        maxNumber = Math.min(maxNumber + 10, 100);
+        difficultyLevel = Math.min(difficultyLevel + 0.5, 3);
+      } else if (performance < 0.5) {
+        maxNumber = Math.max(maxNumber - 10, 10);
+        difficultyLevel = Math.max(difficultyLevel - 0.5, 1);
+      }
+    }
+
+    function unlockRewards() {
+      if (stars >= 10 && !unlockedItems.includes('new-character')) {
+        unlockedItems.push('new-character');
+        showFeedback('New character unlocked!');
+      }
+    }
+
+    function showHint(player) {
+      if (!isGameActive) return;
+      const nums = [
+        parseInt(document.getElementById(`number${player * 2 - 1}`).textContent),
+        parseInt(document.getElementById(`number${player * 2}`).textContent)
+      ];
+      const t = translations[language];
+      let hint = '';
+      if (nums[0] < nums[1]) hint = t.hintSmaller;
+      else if (nums[0] > nums[1]) hint = t.hintBigger;
+      else hint = t.hintEqual;
+      showFeedback(hint);
+      if (!isMuted && hintSound.dataset.loaded) hintSound.play();
+    }
+
+    function showEduPopup() {
+      const popup = document.getElementById('edu-popup');
+      const fact = document.getElementById('edu-fact');
+      const facts = eduFacts[currentStage];
+      fact.textContent = facts[Math.floor(Math.random() * facts.length)];
+      popup.classList.add('active');
+      speak(fact.textContent);
+    }
+
+    function closeEduPopup() {
+      document.getElementById('edu-popup').classList.remove('active');
+    }
+
+    function toggleMute() {
+      isMuted = !isMuted;
+      const t = translations[language];
+      document.getElementById('mute-btn').textContent = isMuted ? t.unmuteBtn : t.muteBtn;
+      bgMusic1.muted = isMuted;
+      bgMusic2.muted = isMuted;
+      bgMusic3.muted = isMuted;
+      correctSound.muted = isMuted;
+      hintSound.muted = isMuted;
+      winSound.muted = isMuted;
+      zapSound.muted = isMuted;
+      pauseSound.muted = isMuted;
+      powerUpSound.muted = isMuted;
+      if (!isMuted && isGameActive) playCurrentMusic();
+    }
+
+    function changeMusic() {
+      currentMusic = currentMusic % 3 + 1;
+      playCurrentMusic();
+    }
+
+    function playCurrentMusic() {
+      bgMusic1.pause();
+      bgMusic2.pause();
+      bgMusic3.pause();
+      if (!isMuted && isGameActive) {
+        document.getElementById(`bgMusic${currentMusic}`).play();
+      }
+    }
+
+    function showAccessibility() {
+      document.getElementById('accessibility-menu').classList.add('active');
+    }
+
+    function toggleColorblind() {
+      isColorblind = !isColorblind;
+      document.body.classList.toggle('colorblind', isColorblind);
+    }
+
+    function toggleLargeText() {
+      isLargeText = !isLargeText;
+      document.body.classList.toggle('large-text', isLargeText);
+    }
+
+    function closeAccessibility() {
+      document.getElementById('accessibility-menu').classList.remove('active');
+    }
+
+    function togglePause() {
+      const overlay = document.getElementById('pause-overlay');
+      const pauseBtn = document.getElementById('pause-btn');
+      const t = translations[language];
+      if (isGameActive) {
+        isGameActive = false;
+        overlay.classList.add('active');
+        pauseBtn.textContent = t.resumeBtn;
+        bgMusic1.pause();
+        bgMusic2.pause();
+        bgMusic3.pause();
+        if (!isMuted && pauseSound.dataset.loaded) pauseSound.play();
+      } else {
+        isGameActive = true;
+        overlay.classList.remove('active');
+        pauseBtn.textContent = t.pauseBtn;
+        if (!isMuted) playCurrentMusic();
+        if (!isMuted && pauseSound.dataset.loaded) pauseSound.play();
+      }
+    }
+
+    function goHome() {
+      window.location.href = 'omardonky.html';
+    }
+
+    function startGame() {
+      currentPosition = isMultiplayer ? [0, 0] : [0];
+      enzymes = isMultiplayer ? [0, 0] : [0];
+      isGameActive = true;
+      document.getElementById('enzymes').textContent = isMultiplayer ? `${enzymes[0]} (${enzymes[1]})` : enzymes[0];
+      document.querySelector('.progress').style.width = '0%';
+      document.querySelectorAll('.character').forEach((char, i) => {
+        char.style[language === 'ar' ? 'right' : 'left'] = '0%';
+        char.style.backgroundImage = `url('${assets.characters[selectedCharacter[i]]}')`;
+        if (characterCustomization[i].color) {
+          char.style.filter = `hue-rotate(${characterCustomization[i].color === 'red' ? 0 : 240}deg)`;
+        }
+      });
+      document.querySelector('.track').className = `track ${currentStage}`;
+      document.body.className = currentStage;
+      generateNumbers(1);
+      if (isMultiplayer) generateNumbers(2);
+      if (!isMuted) playCurrentMusic();
+    }
+
+    document.querySelectorAll('.lang-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.lang-option').forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectLanguage(option.dataset.lang);
+      });
+    });
+
+    document.querySelectorAll('.character-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.character-option').forEach(opt => opt.classList.remove('selected'));
+        option.classList.add('selected');
+        selectedCharacter[0] = option.dataset.character;
+        if (isMultiplayer) selectedCharacter[1] = option.dataset.character;
+      });
+    });
+
+    document.querySelectorAll('.customize-option').forEach(option => {
+      option.addEventListener('click', () => {
+        option.classList.toggle('selected');
+      });
+    });
+
+    // Pre-select first character and language
+    document.querySelector('.character-option[data-character="hamburger"]').classList.add('selected');
+    document.querySelector('.lang-option[data-lang="en"]').classList.add('selected');
+  </script>
+</body>
+</html>
